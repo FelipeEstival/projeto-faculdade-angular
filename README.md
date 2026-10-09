@@ -1,59 +1,62 @@
-# FrontendAngular
+# Projeto Angular com TypeScript
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.2.
+Projeto Acadêmico em Grupo em desenvolvimento utilizando **Angular**, **TypeScript** 
 
-## Development server
+## Tecnologias utilizadas
 
-To start a local development server, run:
+- **Angular** — framework para desenvolvimento de aplicações web.
+- **TypeScript** — linguagem com tipagem estática baseada em JavaScript.
+- **Node.js** — ambiente de execução JavaScript.
+- **npm** — gerenciamento de dependências e execução de scripts.
+- **Vite** — ferramenta de desenvolvimento e build, caso esteja configurada no projeto.
 
-```bash
-ng serve
-```
+## Pré-requisitos
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Antes de executar o projeto, instale:
 
-## Code scaffolding
+- [Node.js](https://nodejs.org/)
+- npm, incluído na instalação do Node.js.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Como executar o projeto
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### 1. Clone o repositório
 
 ```bash
-ng build
+git clone https://github.com/FelipeEstival/projeto-faculdade-angular.git
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### 2. Instale as dependências
 
 ```bash
-ng test
+npm install
 ```
 
-## Running end-to-end tests
+### 3. Inicie o servidor de desenvolvimento
 
-For end-to-end (e2e) testing, run:
+Se o projeto utilizar Vite:
 
 ```bash
-ng e2e
+npm run dev
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Se utilizar o Angular CLI:
 
-## Additional Resources
+```bash
+npm start
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+O terminal exibirá o endereço local para acessar a aplicação no navegador.
+
+## Autores
+
+**Felipe Mauro Estival**
+**Mateus Santana Machado**
+**Rafael Borges**
+**Kaio Bezerra Santos**
+
+## Referências
+
+- [Documentação oficial do Angular](https://angular.dev/)
+- [Documentação do TypeScript](https://www.typescriptlang.org/docs/)
+- [Documentação do Vite](https://vite.dev/guide/)
+- [Documentação do npm](https://docs.npmjs.com/)
