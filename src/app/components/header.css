@@ -1,0 +1,62 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: var(--altura-header);
+  padding: 0 24px;
+  background: var(--cor-superficie);
+  border-bottom: 1px solid var(--cor-borda);
+}
+ 
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  text-decoration: none;
+}
+ 
+.marca__icone {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+ 
+.menu {
+  display: flex;
+  gap: 4px;
+}
+ 
+.menu__link {
+  padding: 8px 14px;
+  border-radius: var(--raio);
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+ 
+.menu__link:hover {
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+}
+ 
+.menu__link--ativo {
+  background: var(--cor-primaria-suave);
+  color: var(--cor-primaria);
+}
+ 
+@media (max-width: 480px) {
+  .header {
+    gap: 12px;
+    padding: 0 12px;
+  }
+ 
+  .marca__nome {
+    display: none;
+  }
+}

@@ -1,0 +1,14 @@
+<header class="header">
+  <a class="marca" routerLink="/">
+    <span class="marca__icone" aria-hidden="true">▦</span>
+    <span class="marca__nome">Kanban</span>
+  </a>
+ 
+  <nav class="menu" aria-label="Navegação principal">
+    @for (item of itensMenu; track item.caminho) {
+      <a class="menu__link" [routerLink]="item.caminho" routerLinkActive="menu__link--ativo">
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+</header>
