@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+
+.pagina-detalhe {
+  width: min(100%, 760px);
+  margin: 0 auto;
+}
+
+.voltar {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: var(--cor-primaria);
+  text-decoration: none;
+}
+
+.voltar:hover {
+  text-decoration: underline;
+}
+
+.pagina-detalhe h1 {
+  margin: 0 0 20px;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+}
+
+.identificador {
+  margin: 0 0 12px;
+  color: var(--cor-texto-suave);
+  font-size: 0.875rem;
+}
+
+.estado {
+  margin: 0;
+  padding: 24px;
+  border: 1px dashed var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-texto-suave);
+}

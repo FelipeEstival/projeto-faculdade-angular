@@ -10,3 +10,16 @@ export interface Tarefa {
   responsavel: string;
   prazo: string;
 }
+
+
+export interface Projeto {
+  id: string | number;
+  nome?: string;
+  titulo?: string;
+  descricao?: string;
+  [campo: string]: unknown;
+}
+
+export interface ProjetoComTarefas extends Projeto {
+  tarefas: Tarefa[];
+}

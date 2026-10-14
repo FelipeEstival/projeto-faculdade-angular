@@ -1,5 +1,5 @@
 <article class="tarefa-card">
-  <h2 class="tarefa-card__titulo">{{ tarefa.titulo }}</h2>
+  <h2 class="tarefa-card__titulo"><a [routerLink]="['/tarefas', tarefa.id]">{{ tarefa.titulo }}</a></h2>
 
   <div class="tarefa-card__marcadores">
     <span class="marcador marcador--status">{{ tarefa.status }}</span>

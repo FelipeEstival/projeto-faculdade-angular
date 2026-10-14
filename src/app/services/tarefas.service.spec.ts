@@ -39,4 +39,25 @@ describe('TarefasService', () => {
 
     expect(resposta).toEqual(tarefas);
   });
+
+  it('busca uma tarefa pelo ID com uma requisição GET', () => {
+    const tarefa: Tarefa = {
+      id: 2,
+      titulo: 'Estudar Angular',
+      status: 'Pendente',
+      prioridade: 'Média',
+      responsavel: 'Estudante',
+      prazo: '2026-10-21',
+    };
+    let resposta: Tarefa | undefined;
+
+    service.getPorId(2).subscribe((resultado) => (resposta = resultado));
+
+    const requisicao = httpTesting.expectOne(`${TAREFAS_API_URL}/2`);
+    expect(requisicao.request.method).toBe('GET');
+    requisicao.flush(tarefa);
+
+    expect(resposta).toEqual(tarefa);
+  });
+
 });
