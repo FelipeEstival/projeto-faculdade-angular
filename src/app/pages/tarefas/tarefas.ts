@@ -16,7 +16,7 @@ import { TarefasService } from '../../services/tarefas.service';
             Acompanhe as tarefas e seus prazos em um só lugar.
           </p>
         </div>
-        @if (!carregando() && !erro()) {
+        @if (!carregando()) {
           <span class="pagina-tarefas__total" aria-live="polite">
             {{ tarefas().length }} {{ tarefas().length === 1 ? 'tarefa' : 'tarefas' }}
           </span>
@@ -25,16 +25,8 @@ import { TarefasService } from '../../services/tarefas.service';
 
       @if (carregando()) {
         <p class="estado" role="status">Carregando tarefas…</p>
-      } @else if (erro()) {
-        <div class="estado estado--erro" role="alert">
-          <h2>Não foi possível carregar as tarefas</h2>
-          <p>Verifique a conexão com a API e tente novamente.</p>
-          <button class="botao-tentar-novamente" type="button" (click)="carregarTarefas()">
-            Tentar novamente
-          </button>
-        </div>
       } @else if (tarefas().length === 0) {
-        <p class="estado">Ainda não há tarefas cadastradas.</p>
+        <p class="estado">Nenhuma tarefa para exibir.</p>
       } @else {
         <div class="tarefas-grid" aria-label="Tarefas cadastradas">
           @for (tarefa of tarefas(); track tarefa.id) {
@@ -52,7 +44,6 @@ export class Tarefas {
 
   protected readonly tarefas = signal<Tarefa[]>([]);
   protected readonly carregando = signal(true);
-  protected readonly erro = signal(false);
 
   constructor() {
     // A consulta ocorre no navegador, sem chamar a API durante o prerender SSR.
@@ -61,7 +52,6 @@ export class Tarefas {
 
   protected carregarTarefas(): void {
     this.carregando.set(true);
-    this.erro.set(false);
 
     this.tarefasService.getTodas().subscribe({
       next: (tarefas) => {
@@ -69,7 +59,7 @@ export class Tarefas {
         this.carregando.set(false);
       },
       error: () => {
-        this.erro.set(true);
+        this.tarefas.set([]);
         this.carregando.set(false);
       },
     });
