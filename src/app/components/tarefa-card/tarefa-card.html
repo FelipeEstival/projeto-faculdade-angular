@@ -1,0 +1,19 @@
+<article class="tarefa-card">
+  <h2 class="tarefa-card__titulo">{{ tarefa.titulo }}</h2>
+
+  <div class="tarefa-card__marcadores">
+    <span class="marcador marcador--status">{{ tarefa.status }}</span>
+    <span class="marcador marcador--prioridade">Prioridade: {{ tarefa.prioridade }}</span>
+  </div>
+
+  <dl class="tarefa-card__detalhes">
+    <div>
+      <dt>Responsável</dt>
+      <dd>{{ tarefa.responsavel }}</dd>
+    </div>
+    <div>
+      <dt>Prazo</dt>
+      <dd>{{ tarefa.prazo }}</dd>
+    </div>
+  </dl>
+</article>
