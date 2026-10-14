@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Tarefa } from '../../../tipos';
+import type { Tarefa } from '../../../tipos';
 
 @Component({
   selector: 'app-tarefa-card',

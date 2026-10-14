@@ -1,25 +1,23 @@
-export type StatusTarefa = 'Pendente' | 'Em andamento' | 'Concluída';
-
-export type PrioridadeTarefa = 'Baixa' | 'Média' | 'Alta';
-
-export interface Tarefa {
-  id: string | number;
-  titulo: string;
-  status: StatusTarefa | string;
-  prioridade: PrioridadeTarefa | string;
-  responsavel: string;
-  prazo: string;
-}
-
+export type Status = 'a-fazer' | 'em-andamento' | 'em-revisao' | 'concluida'
+export type Prioridade = 'baixa' | 'media' | 'alta'
 
 export interface Projeto {
-  id: string | number;
-  nome?: string;
-  titulo?: string;
-  descricao?: string;
-  [campo: string]: unknown;
+  id: string
+  nome: string
+  descricao: string
+  disciplina: string
+  criadoEm: string
 }
 
-export interface ProjetoComTarefas extends Projeto {
-  tarefas: Tarefa[];
+export interface Tarefa {
+  id: string
+  projetoId: string
+  titulo: string
+  descricao: string
+  status: Status
+  prioridade: Prioridade
+  responsavel: string
+  prazo: string
 }
+
+export type NovaTarefa = Omit<Tarefa, 'id'>

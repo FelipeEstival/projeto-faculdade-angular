@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Projeto, ProjetoComTarefas, Tarefa } from '../../tipos';
+import type { Projeto, Tarefa } from '../../tipos';
+import type { ProjetoComTarefas } from './projeto-com-tarefas';
 
 export const API_URL = 'http://localhost:3000';
 export const TAREFAS_API_URL = `${API_URL}/tarefas`;
@@ -15,7 +16,7 @@ export class TarefasService {
     return this.http.get<Tarefa[]>(TAREFAS_API_URL);
   }
 
-  getPorId(id: string | number): Observable<Tarefa> {
+  getPorId(id: string): Observable<Tarefa> {
     return this.http.get<Tarefa>(`${TAREFAS_API_URL}/${id}`);
   }
 
@@ -23,11 +24,11 @@ export class TarefasService {
     return this.http.get<Projeto[]>(PROJETOS_API_URL);
   }
 
-  getProjetoPorId(id: string | number): Observable<Projeto> {
+  getProjetoPorId(id: string): Observable<Projeto> {
     return this.http.get<Projeto>(`${PROJETOS_API_URL}/${id}`);
   }
 
-  getProjetoComTarefas(id: string | number): Observable<ProjetoComTarefas> {
+  getProjetoComTarefas(id: string): Observable<ProjetoComTarefas> {
     return this.http.get<ProjetoComTarefas>(`${PROJETOS_API_URL}/${id}?_embed=tarefas`);
   }
 }

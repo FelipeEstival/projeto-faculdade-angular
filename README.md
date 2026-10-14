@@ -86,3 +86,21 @@ Se a API estiver em outra origem, ela deverá permitir requisições CORS do end
 - [Documentação do TypeScript](https://www.typescriptlang.org/docs/)
 - [Documentação do Vite](https://vite.dev/guide/)
 - [Documentação do npm](https://docs.npmjs.com/)
+
+## API local e contrato de dados (Marco 1)
+
+Use Node.js 24 ou superior. Após clonar, execute `npm install`.
+Inicie o Angular com `npm run dev` (ou `npm start`).
+Em outro terminal, rode `npm run api` (ou `npx json-server db.json`).
+
+- http://localhost:3000/tarefas: 5 tarefas.
+- http://localhost:3000/projetos: 2 projetos.
+- http://localhost:3000/projetos/1?_embed=tarefas: projeto 1 com 4 tarefas.
+- http://localhost:3000/tarefas?status=a-fazer: 2 tarefas.
+
+`src/tipos.ts` contém o contrato do guia. IDs e datas são strings.
+A extensão `ProjetoComTarefas` fica em `src/app/services/projeto-com-tarefas.ts`.
+
+A API altera `db.json` ao receber escritas. Para restaurar, copie `db.seed.json`
+sobre `db.json`: `cp db.seed.json db.json` no Linux/macOS ou
+`Copy-Item db.seed.json db.json` no PowerShell.
