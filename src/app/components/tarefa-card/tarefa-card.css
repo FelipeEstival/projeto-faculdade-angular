@@ -64,3 +64,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+.tarefa-card__titulo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.tarefa-card__titulo a:hover {
+  color: var(--cor-primaria);
+  text-decoration: underline;
+}

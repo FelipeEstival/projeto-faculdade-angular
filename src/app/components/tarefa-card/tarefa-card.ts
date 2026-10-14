@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Tarefa } from '../../../tipos';
 
 @Component({
   selector: 'app-tarefa-card',
+  imports: [RouterLink],
   templateUrl: './tarefa-card.html',
   styleUrl: './tarefa-card.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
