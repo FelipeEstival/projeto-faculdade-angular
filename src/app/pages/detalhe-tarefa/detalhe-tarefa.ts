@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Tarefa } from '../../../tipos';
+import type { Tarefa } from '../../../tipos';
 import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
 import { TarefasService } from '../../services/tarefas.service';
 
