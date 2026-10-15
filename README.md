@@ -47,31 +47,22 @@ npm start
 
 O terminal exibirá o endereço local para acessar a aplicação no navegador.
 
-## Tela de tarefas e API
+## Módulo de leitura da API (M2)
 
-A rota inicial (`/`) redireciona para `/tarefas`. Nessa tela, a aplicação faz uma requisição
-`GET` para obter a lista de tarefas e exibe um cartão para cada item, usando `id` como chave
-de rastreamento.
+`src/app/services/tarefas.service.ts` centraliza as consultas HTTP com retorno tipado. A base
+local da API é `http://localhost:3000` (`API_URL`), e os tipos de domínio estão em `src/tipos.ts`.
 
-O repositório não especifica a URL da API. Por padrão, o serviço consulta
-`http://localhost:3000/tarefas`. Ajuste a constante `TAREFAS_API_URL` em
-`src/app/services/tarefas.service.ts` para o endereço fornecido pela disciplina. A API deve
-responder com um array JSON compatível com o tipo `Tarefa` definido em `src/tipos.ts`, por exemplo:
+| Função | Retorno | Requisição |
+| --- | --- | --- |
+| `getTodas()` | `Observable<Tarefa[]>` | `GET /tarefas` |
+| `getPorId(id)` | `Observable<Tarefa>` | `GET /tarefas/:id` |
+| `getTodosProjetos()` | `Observable<Projeto[]>` | `GET /projetos` |
+| `getProjetoPorId(id)` | `Observable<Projeto>` | `GET /projetos/:id` |
+| `getProjetoComTarefas(id)` | `Observable<ProjetoComTarefas>` | `GET /projetos/:id?_embed=tarefas` |
 
-```json
-[
-  {
-    "id": 1,
-    "titulo": "Preparar apresentação",
-    "status": "Pendente",
-    "prioridade": "Alta",
-    "responsavel": "Estudante",
-    "prazo": "2026-10-20"
-  }
-]
-```
-
-Se a API estiver em outra origem, ela deverá permitir requisições CORS do endereço da aplicação.
+O tipo `ProjetoComTarefas`, definido em `src/app/services/projeto-com-tarefas.ts`, estende
+`Projeto` com a lista `tarefas: Tarefa[]`. Na API JSON Server, essa lista é carregada com o
+parâmetro `_embed=tarefas`, não por uma chamada separada.
 
 ## Autores
 
