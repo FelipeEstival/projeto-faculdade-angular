@@ -1,3 +1,4 @@
+import { RouterLink } from '@angular/router';
 import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } from '@angular/core';
 import type { Tarefa } from '../../../tipos';
 import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
@@ -5,13 +6,14 @@ import { TarefasService } from '../../services/tarefas.service';
 
 @Component({
   selector: 'app-tarefas',
-  imports: [TarefaCard],
+  imports: [TarefaCard, RouterLink],
   template: `
     <section class="pagina-tarefas" aria-labelledby="titulo-tarefas">
       <header class="pagina-tarefas__cabecalho">
         <div>
           <p class="pagina-tarefas__sobretitulo">Organização</p>
           <h1 id="titulo-tarefas">Lista de tarefas</h1>
+          <a routerLink="/tarefas/nova">Nova tarefa</a>
           <p class="pagina-tarefas__descricao">
             Acompanhe as tarefas e seus prazos em um só lugar.
           </p>

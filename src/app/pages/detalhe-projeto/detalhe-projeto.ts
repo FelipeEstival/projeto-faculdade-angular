@@ -27,6 +27,7 @@ import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
           <dt>Criado em</dt><dd>{{ atual.criadoEm }}</dd>
         </dl>
         <h2>Tarefas do projeto</h2>
+        <p><a routerLink="/tarefas/nova" [queryParams]="{ projetoId: atual.id }">Nova tarefa neste projeto</a></p>
         <div class="tarefas-grid">
           @for (tarefa of atual.tarefas; track tarefa.id) {
             <app-tarefa-card [tarefa]="tarefa" />
