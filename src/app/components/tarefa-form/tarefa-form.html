@@ -1,0 +1,117 @@
+<form #formulario="ngForm" class="tarefa-form" (ngSubmit)="enviar(formulario)">
+  <div class="campo">
+    <label for="titulo-tarefa">Título</label>
+    <input
+      id="titulo-tarefa"
+      name="titulo"
+      type="text"
+      [(ngModel)]="dados.titulo"
+      required
+      #titulo="ngModel"
+    />
+    @if (titulo.invalid && titulo.touched) {
+      <small class="erro">Informe o título da tarefa.</small>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="descricao-tarefa">Descrição</label>
+    <textarea
+      id="descricao-tarefa"
+      name="descricao"
+      rows="3"
+      [(ngModel)]="dados.descricao"
+      required
+      #descricao="ngModel"
+    ></textarea>
+    @if (descricao.invalid && descricao.touched) {
+      <small class="erro">Informe a descrição da tarefa.</small>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="projeto-tarefa">Projeto</label>
+    <select
+      id="projeto-tarefa"
+      name="projetoId"
+      [(ngModel)]="dados.projetoId"
+      required
+      [disabled]="carregandoProjetos || !!erroProjetos"
+      #projetoId="ngModel"
+    >
+      <option value="">Selecione um projeto</option>
+      @for (projeto of projetos; track projeto.id) {
+        <option [value]="projeto.id">{{ projeto.nome }}</option>
+      }
+    </select>
+    @if (carregandoProjetos) {
+      <small role="status">Carregando projetos...</small>
+    } @else if (erroProjetos) {
+      <small class="erro" role="alert">{{ erroProjetos }}</small>
+    } @else if (projetoId.invalid && projetoId.touched) {
+      <small class="erro">Selecione um projeto.</small>
+    }
+  </div>
+
+  <div class="campos-duplos">
+    <div class="campo">
+      <label for="status-tarefa">Status</label>
+      <select id="status-tarefa" name="status" [(ngModel)]="dados.status" required>
+        @for (opcao of statusOpcoes; track opcao.valor) {
+          <option [value]="opcao.valor">{{ opcao.texto }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="prioridade-tarefa">Prioridade</label>
+      <select id="prioridade-tarefa" name="prioridade" [(ngModel)]="dados.prioridade" required>
+        @for (opcao of prioridadeOpcoes; track opcao.valor) {
+          <option [value]="opcao.valor">{{ opcao.texto }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="campos-duplos">
+    <div class="campo">
+      <label for="responsavel-tarefa">Responsável</label>
+      <input
+        id="responsavel-tarefa"
+        name="responsavel"
+        type="text"
+        [(ngModel)]="dados.responsavel"
+        required
+        #responsavel="ngModel"
+      />
+      @if (responsavel.invalid && responsavel.touched) {
+        <small class="erro">Informe o responsável.</small>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="prazo-tarefa">Prazo</label>
+      <input
+        id="prazo-tarefa"
+        name="prazo"
+        type="date"
+        [(ngModel)]="dados.prazo"
+        required
+        #prazo="ngModel"
+      />
+      @if (prazo.invalid && prazo.touched) {
+        <small class="erro">Informe o prazo.</small>
+      }
+    </div>
+  </div>
+
+  <div class="acoes">
+    <button type="button" class="botao-secundario" (click)="cancelar.emit()">Cancelar</button>
+    <button
+      type="submit"
+      [disabled]="formulario.invalid || carregandoProjetos || !!erroProjetos || enviando"
+    >
+      {{ enviando ? 'Salvando...' : tarefa ? 'Salvar alterações' : 'Criar tarefa' }}
+    </button>
+  </div>
+</form>
