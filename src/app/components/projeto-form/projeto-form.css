@@ -1,0 +1,80 @@
+:host {
+  display: block;
+}
+
+.projeto-form {
+  display: grid;
+  gap: 16px;
+  max-width: 680px;
+  padding: 20px;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+}
+
+.campo {
+  display: grid;
+  gap: 6px;
+}
+
+.campo label {
+  font-weight: 600;
+}
+
+.campo input,
+.campo textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  color: var(--cor-texto);
+  font: inherit;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+}
+
+.campo input:focus,
+.campo textarea:focus {
+  outline: 2px solid var(--cor-primaria);
+  outline-offset: 1px;
+}
+
+.campo input[aria-invalid='true'],
+.campo textarea[aria-invalid='true'] {
+  border-color: #b42318;
+}
+
+.erro {
+  color: #b42318;
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.acoes button {
+  padding: 10px 14px;
+  font: inherit;
+  border: 1px solid var(--cor-primaria);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.acoes button[type='submit'] {
+  color: white;
+  background: var(--cor-primaria);
+}
+
+.acoes button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.acoes .botao-secundario {
+  color: var(--cor-texto);
+  background: transparent;
+  border-color: var(--cor-borda);
+}

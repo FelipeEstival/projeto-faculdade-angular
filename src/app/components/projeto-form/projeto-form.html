@@ -1,0 +1,71 @@
+<form #formulario="ngForm" class="projeto-form" (ngSubmit)="enviar(formulario)" novalidate>
+  <div class="campo">
+    <label for="nome-projeto">Nome do projeto</label>
+    <input
+      id="nome-projeto"
+      name="nome"
+      type="text"
+      [(ngModel)]="dados.nome"
+      required
+      maxlength="120"
+      autocomplete="off"
+      [attr.aria-invalid]="nome.invalid && nome.touched ? 'true' : null"
+      aria-describedby="erro-nome-projeto"
+      #nome="ngModel"
+    />
+    @if (nome.touched && (nome.invalid || !dados.nome.trim())) {
+      <small id="erro-nome-projeto" class="erro"
+        >Informe o nome do projeto (até 120 caracteres).</small
+      >
+    }
+  </div>
+
+  <div class="campo">
+    <label for="descricao-projeto">Descrição</label>
+    <textarea
+      id="descricao-projeto"
+      name="descricao"
+      rows="4"
+      [(ngModel)]="dados.descricao"
+      required
+      maxlength="500"
+      [attr.aria-invalid]="descricao.invalid && descricao.touched ? 'true' : null"
+      aria-describedby="erro-descricao-projeto"
+      #descricao="ngModel"
+    ></textarea>
+    @if (descricao.touched && (descricao.invalid || !dados.descricao.trim())) {
+      <small id="erro-descricao-projeto" class="erro"
+        >Informe a descrição do projeto (até 500 caracteres).</small
+      >
+    }
+  </div>
+
+  <div class="campo">
+    <label for="disciplina-projeto">Disciplina</label>
+    <input
+      id="disciplina-projeto"
+      name="disciplina"
+      type="text"
+      [(ngModel)]="dados.disciplina"
+      required
+      maxlength="120"
+      [attr.aria-invalid]="disciplina.invalid && disciplina.touched ? 'true' : null"
+      aria-describedby="erro-disciplina-projeto"
+      #disciplina="ngModel"
+    />
+    @if (disciplina.touched && (disciplina.invalid || !dados.disciplina.trim())) {
+      <small id="erro-disciplina-projeto" class="erro"
+        >Informe a disciplina (até 120 caracteres).</small
+      >
+    }
+  </div>
+
+  <div class="acoes">
+    <button type="button" class="botao-secundario" [disabled]="enviando" (click)="cancelar.emit()">
+      Cancelar
+    </button>
+    <button type="submit" [disabled]="formulario.invalid || enviando">
+      {{ enviando ? 'Salvando…' : projeto ? 'Salvar alterações' : 'Criar projeto' }}
+    </button>
+  </div>
+</form>

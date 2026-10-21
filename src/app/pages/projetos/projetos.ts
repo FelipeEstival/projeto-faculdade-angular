@@ -15,7 +15,10 @@ import { TarefasService } from '../../services/tarefas.service';
   imports: [RouterLink],
   template: `
     <section aria-labelledby="titulo-projetos">
-      <h1 id="titulo-projetos">Lista de projetos</h1>
+      <header class="cabecalho-projetos">
+        <h1 id="titulo-projetos">Lista de projetos</h1>
+        <a class="botao-novo-projeto" routerLink="/projetos/novo">Novo projeto</a>
+      </header>
 
       @if (carregando()) {
         <p role="status">Carregando projetos...</p>
@@ -50,6 +53,10 @@ import { TarefasService } from '../../services/tarefas.service';
     </section>
   `,
   styles: `
+    .cabecalho-projetos { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+    .cabecalho-projetos h1 { margin: 0; }
+    .botao-novo-projeto { padding: 0.65rem 1rem; color: white; background: var(--cor-primaria); border-radius: 6px; font-weight: 600; text-decoration: none; }
+    .botao-novo-projeto:hover { filter: brightness(0.94); }
     article {
       padding: 1rem;
       margin-bottom: 1rem;

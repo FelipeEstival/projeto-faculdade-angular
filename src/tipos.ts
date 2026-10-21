@@ -9,6 +9,9 @@ export interface Projeto {
   criadoEm: string
 }
 
+export type NovoProjeto = Omit<Projeto, 'id'>
+export type DadosProjeto = Pick<Projeto, 'nome' | 'descricao' | 'disciplina'>
+
 export interface Tarefa {
   id: string
   projetoId: string
