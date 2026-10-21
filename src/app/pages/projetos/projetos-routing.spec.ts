@@ -20,7 +20,9 @@ describe('Rotas de projetos', () => {
     TestBed.tick();
     http.expectOne('http://localhost:3000/projetos').flush([projeto]);
     harness.detectChanges();
-    expect(harness.routeNativeElement?.querySelector('a')?.getAttribute('href')).toBe('/projetos/1');
+    expect(
+      harness.routeNativeElement?.querySelector('a[href="/projetos/1"]')?.getAttribute('href')
+    ).toBe('/projetos/1');
   });
 
   it('busca o projeto com embed e renderiza seu cartão de tarefa', async () => {

@@ -20,6 +20,7 @@ import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
         <p role="alert">{{ erro() }}</p>
       } @else if (projeto(); as atual) {
         <p>{{ atual.descricao }}</p>
+        <p><a [routerLink]="['/projetos', atual.id, 'editar']">Editar projeto</a></p>
         <dl>
           <dt>ID</dt><dd>{{ atual.id }}</dd>
           <dt>Disciplina</dt><dd>{{ atual.disciplina }}</dd>

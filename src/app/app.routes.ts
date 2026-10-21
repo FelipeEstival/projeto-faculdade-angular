@@ -16,6 +16,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/tarefas/tarefas').then((m) => m.Tarefas),
   },
   {
+    path: 'projetos/novo',
+    title: 'Novo projeto',
+    loadComponent: () => import('./pages/formulario-projeto/formulario-projeto').then((m) => m.FormularioProjeto),
+  },
+  {
+    path: 'projetos/:id/editar',
+    title: 'Editar projeto',
+    loadComponent: () => import('./pages/formulario-projeto/formulario-projeto').then((m) => m.FormularioProjeto),
+  },
+  {
     path: 'projetos/:id',
     title: 'Detalhe do projeto',
     loadComponent: () => import('./pages/detalhe-projeto/detalhe-projeto').then((m) => m.DetalheProjeto),
@@ -30,4 +40,3 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/nao-encontrada/nao-encontrada').then((m) => m.NaoEncontrada),
   },
 ];
- 
