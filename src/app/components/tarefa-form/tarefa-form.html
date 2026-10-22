@@ -1,4 +1,5 @@
 <form #formulario="ngForm" class="tarefa-form" (ngSubmit)="enviar(formulario)">
+  <fieldset [disabled]="enviando" class="campos-formulario">
   <div class="campo">
     <label for="titulo-tarefa">Título</label>
     <input
@@ -105,8 +106,9 @@
     </div>
   </div>
 
+  </fieldset>
   <div class="acoes">
-    <button type="button" class="botao-secundario" (click)="cancelar.emit()">Cancelar</button>
+    <button type="button" class="botao-secundario" [disabled]="enviando" (click)="cancelar.emit()">Cancelar</button>
     <button
       type="submit"
       [disabled]="formulario.invalid || carregandoProjetos || !!erroProjetos || enviando"
