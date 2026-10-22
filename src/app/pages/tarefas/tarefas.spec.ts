@@ -1,3 +1,4 @@
+import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 import { throwError } from 'rxjs';
 import { TarefasService } from '../../services/tarefas.service';
@@ -8,6 +9,7 @@ describe('Tarefas', () => {
     await TestBed.configureTestingModule({
       imports: [Tarefas],
       providers: [
+        provideRouter([]),
         {
           provide: TarefasService,
           useValue: {

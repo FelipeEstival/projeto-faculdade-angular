@@ -8,6 +8,7 @@ import {
   Output,
   SimpleChanges,
   inject,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import type { NovaTarefa, Prioridade, Projeto, Status, Tarefa } from '../../../tipos';
@@ -23,6 +24,8 @@ import { TarefasService } from '../../services/tarefas.service';
 export class TarefaForm implements OnInit, OnChanges {
   @Input() tarefa: Tarefa | null = null;
   @Input() enviando = false;
+  @Input() projetoIdInicial = '';
+  private readonly cdr = inject(ChangeDetectorRef);
   @Output() salvar = new EventEmitter<NovaTarefa>();
   @Output() cancelar = new EventEmitter<void>();
 
@@ -52,7 +55,7 @@ export class TarefaForm implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['tarefa']) {
+    if (changes['tarefa'] || changes['projetoIdInicial']) {
       this.dados = this.tarefa
         ? {
             projetoId: this.tarefa.projetoId,
@@ -68,7 +71,7 @@ export class TarefaForm implements OnInit, OnChanges {
   }
 
   protected enviar(formulario: NgForm): void {
-    if (this.enviando) {
+    if (this.enviando || this.carregandoProjetos || this.erroProjetos) {
       return;
     }
 
@@ -88,17 +91,19 @@ export class TarefaForm implements OnInit, OnChanges {
       next: (projetos) => {
         this.projetos = projetos;
         this.carregandoProjetos = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.erroProjetos = 'Não foi possível carregar os projetos. Verifique se a API está funcionando.';
         this.carregandoProjetos = false;
+        this.cdr.markForCheck();
       },
     });
   }
 
   private novaTarefaVazia(): NovaTarefa {
     return {
-      projetoId: '',
+      projetoId: this.projetoIdInicial,
       titulo: '',
       descricao: '',
       status: 'a-fazer',

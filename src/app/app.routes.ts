@@ -6,6 +6,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/tarefas/tarefas').then((m) => m.Tarefas),
   },
   {
+    path: 'tarefas/nova', title: 'Nova tarefa',
+    loadComponent: () => import('./pages/formulario-tarefa/formulario-tarefa').then((m) => m.FormularioTarefa),
+  },
+  {
+    path: 'tarefas/:id/editar', title: 'Editar tarefa',
+    loadComponent: () => import('./pages/formulario-tarefa/formulario-tarefa').then((m) => m.FormularioTarefa),
+  },
+  {
     path: 'tarefas/:id',
     title: 'Detalhe da tarefa',
     loadComponent: () => import('./pages/detalhe-tarefa/detalhe-tarefa').then((m) => m.DetalheTarefa),

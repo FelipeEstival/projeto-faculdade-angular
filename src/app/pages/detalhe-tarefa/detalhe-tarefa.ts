@@ -20,6 +20,7 @@ import { TarefasService } from '../../services/tarefas.service';
       } @else if (tarefa()) {
         <p class="identificador">ID: {{ tarefa()!.id }}</p>
         <app-tarefa-card [tarefa]="tarefa()!" />
+        <a [routerLink]="['/tarefas', tarefa()!.id, 'editar']">Editar tarefa</a>
       }
     </section>
   `,

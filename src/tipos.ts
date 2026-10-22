@@ -9,7 +9,6 @@ export interface Projeto {
   criadoEm: string
 }
 
-export type NovoProjeto = Omit<Projeto, 'id'>
 export type DadosProjeto = Pick<Projeto, 'nome' | 'descricao' | 'disciplina'>
 
 export interface Tarefa {
@@ -24,3 +23,5 @@ export interface Tarefa {
 }
 
 export type NovaTarefa = Omit<Tarefa, 'id'>
+
+export type NovoProjeto = Omit<Projeto, 'id'>
