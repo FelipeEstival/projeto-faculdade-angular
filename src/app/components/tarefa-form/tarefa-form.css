@@ -1,3 +1,4 @@
+
 :host {
   display: block;
 }
@@ -12,6 +13,7 @@
   border-radius: var(--raio);
 }
 
+/* Organização dos campos */
 .campo {
   display: grid;
   gap: 6px;
@@ -21,6 +23,7 @@
   font-weight: 600;
 }
 
+/* Aparência dos campos de entrada */
 .campo input,
 .campo textarea,
 .campo select {
@@ -34,29 +37,47 @@
   border-radius: 6px;
 }
 
-.campo input:focus,
-.campo textarea:focus,
-.campo select:focus {
-  outline: 2px solid var(--cor-primaria);
+/* Destaque do foco durante a navegação por teclado */
+.campo input:focus-visible,
+.campo textarea:focus-visible,
+.campo select:focus-visible,
+.acoes button:focus-visible {
+  outline: 3px solid var(--cor-primaria);
+  outline-offset: 3px;
+}
+
+/* Identificação visual dos campos inválidos */
+.campo input[aria-invalid='true'],
+.campo textarea[aria-invalid='true'],
+.campo select[aria-invalid='true'] {
+  border: 2px solid #b42318;
+  outline: 2px solid #b42318;
   outline-offset: 1px;
 }
 
+/* Campos desabilitados */
 .campo input:disabled,
 .campo select:disabled {
   cursor: not-allowed;
   opacity: 0.65;
 }
 
+/* Mensagens de erro */
+.erro {
+  color: #b42318;
+  font-weight: 600;
+  padding-left: 8px;
+  border-left: 4px solid #b42318;
+}
+
+/* Organização dos campos em duas colunas */
 .campos-duplos {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
-.erro {
-  color: #b42318;
-}
-
+/* Área dos botões */
 .acoes {
   display: flex;
   justify-content: flex-end;
@@ -72,22 +93,26 @@
   cursor: pointer;
 }
 
+/* Botão principal */
 .acoes button[type='submit'] {
   color: white;
   background: var(--cor-primaria);
 }
 
+/* Botões desabilitados */
 .acoes button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
 
+/* Botão secundário */
 .acoes .botao-secundario {
   color: var(--cor-texto);
   background: transparent;
   border-color: var(--cor-borda);
 }
 
+/* Adaptação para telas pequenas */
 @media (max-width: 520px) {
   .campos-duplos {
     grid-template-columns: 1fr;

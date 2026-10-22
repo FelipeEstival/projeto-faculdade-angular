@@ -33,19 +33,23 @@
   border-radius: 6px;
 }
 
-.campo input:focus,
-.campo textarea:focus {
-  outline: 2px solid var(--cor-primaria);
-  outline-offset: 1px;
+.campo input:focus-visible,
+.campo textarea:focus-visible,
+.acoes button:focus-visible {
+  outline: 3px solid var(--cor-primaria);
+  outline-offset: 3px;
 }
 
 .campo input[aria-invalid='true'],
 .campo textarea[aria-invalid='true'] {
-  border-color: #b42318;
+  border: 2px solid #b42318;
 }
 
 .erro {
   color: #b42318;
+  font-weight: 600;
+  padding-left: 8px;
+  border-left: 4px solid #b42318;
 }
 
 .acoes {

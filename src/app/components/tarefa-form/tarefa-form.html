@@ -1,4 +1,10 @@
-<form #formulario="ngForm" class="tarefa-form" (ngSubmit)="enviar(formulario)">
+
+<form
+  #formulario="ngForm"
+  class="tarefa-form"
+  (ngSubmit)="enviar(formulario)"
+  novalidate
+>
   <div class="campo">
     <label for="titulo-tarefa">Título</label>
     <input
@@ -8,9 +14,14 @@
       [(ngModel)]="dados.titulo"
       required
       #titulo="ngModel"
+      [attr.aria-invalid]="titulo.invalid && titulo.touched ? 'true' : null"
+      [attr.aria-describedby]="titulo.invalid && titulo.touched ? 'erro-titulo-tarefa' : null"
     />
+
     @if (titulo.invalid && titulo.touched) {
-      <small class="erro">Informe o título da tarefa.</small>
+      <small id="erro-titulo-tarefa" class="erro" role="alert">
+        Erro: informe o título da tarefa.
+      </small>
     }
   </div>
 
@@ -23,9 +34,14 @@
       [(ngModel)]="dados.descricao"
       required
       #descricao="ngModel"
+      [attr.aria-invalid]="descricao.invalid && descricao.touched ? 'true' : null"
+      [attr.aria-describedby]="descricao.invalid && descricao.touched ? 'erro-descricao-tarefa' : null"
     ></textarea>
+
     @if (descricao.invalid && descricao.touched) {
-      <small class="erro">Informe a descrição da tarefa.</small>
+      <small id="erro-descricao-tarefa" class="erro" role="alert">
+        Erro: informe a descrição da tarefa.
+      </small>
     }
   </div>
 
@@ -38,25 +54,36 @@
       required
       [disabled]="carregandoProjetos || !!erroProjetos"
       #projetoId="ngModel"
+      [attr.aria-invalid]="projetoId.invalid && projetoId.touched && !carregandoProjetos && !erroProjetos ? 'true' : null"
+      [attr.aria-describedby]="projetoId.invalid && projetoId.touched && !carregandoProjetos && !erroProjetos ? 'erro-projeto-tarefa' : null"
     >
       <option value="">Selecione um projeto</option>
+
       @for (projeto of projetos; track projeto.id) {
         <option [value]="projeto.id">{{ projeto.nome }}</option>
       }
     </select>
+
     @if (carregandoProjetos) {
       <small role="status">Carregando projetos...</small>
     } @else if (erroProjetos) {
       <small class="erro" role="alert">{{ erroProjetos }}</small>
     } @else if (projetoId.invalid && projetoId.touched) {
-      <small class="erro">Selecione um projeto.</small>
+      <small id="erro-projeto-tarefa" class="erro" role="alert">
+        Erro: selecione um projeto.
+      </small>
     }
   </div>
 
   <div class="campos-duplos">
     <div class="campo">
       <label for="status-tarefa">Status</label>
-      <select id="status-tarefa" name="status" [(ngModel)]="dados.status" required>
+      <select
+        id="status-tarefa"
+        name="status"
+        [(ngModel)]="dados.status"
+        required
+      >
         @for (opcao of statusOpcoes; track opcao.valor) {
           <option [value]="opcao.valor">{{ opcao.texto }}</option>
         }
@@ -65,7 +92,12 @@
 
     <div class="campo">
       <label for="prioridade-tarefa">Prioridade</label>
-      <select id="prioridade-tarefa" name="prioridade" [(ngModel)]="dados.prioridade" required>
+      <select
+        id="prioridade-tarefa"
+        name="prioridade"
+        [(ngModel)]="dados.prioridade"
+        required
+      >
         @for (opcao of prioridadeOpcoes; track opcao.valor) {
           <option [value]="opcao.valor">{{ opcao.texto }}</option>
         }
@@ -83,9 +115,14 @@
         [(ngModel)]="dados.responsavel"
         required
         #responsavel="ngModel"
+        [attr.aria-invalid]="responsavel.invalid && responsavel.touched ? 'true' : null"
+        [attr.aria-describedby]="responsavel.invalid && responsavel.touched ? 'erro-responsavel-tarefa' : null"
       />
+
       @if (responsavel.invalid && responsavel.touched) {
-        <small class="erro">Informe o responsável.</small>
+        <small id="erro-responsavel-tarefa" class="erro" role="alert">
+          Erro: informe o responsável.
+        </small>
       }
     </div>
 
@@ -98,18 +135,31 @@
         [(ngModel)]="dados.prazo"
         required
         #prazo="ngModel"
+        [attr.aria-invalid]="prazo.invalid && prazo.touched ? 'true' : null"
+        [attr.aria-describedby]="prazo.invalid && prazo.touched ? 'erro-prazo-tarefa' : null"
       />
+
       @if (prazo.invalid && prazo.touched) {
-        <small class="erro">Informe o prazo.</small>
+        <small id="erro-prazo-tarefa" class="erro" role="alert">
+          Erro: informe o prazo.
+        </small>
       }
     </div>
   </div>
 
   <div class="acoes">
-    <button type="button" class="botao-secundario" (click)="cancelar.emit()">Cancelar</button>
+    <button
+      type="button"
+      class="botao-secundario"
+      [disabled]="enviando"
+      (click)="cancelar.emit()"
+    >
+      Cancelar
+    </button>
+
     <button
       type="submit"
-      [disabled]="formulario.invalid || carregandoProjetos || !!erroProjetos || enviando"
+      [disabled]="carregandoProjetos || !!erroProjetos || enviando"
     >
       {{ enviando ? 'Salvando...' : tarefa ? 'Salvar alterações' : 'Criar tarefa' }}
     </button>
