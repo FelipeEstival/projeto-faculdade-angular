@@ -1,19 +1,31 @@
-<article class="tarefa-card">
-  <h2 class="tarefa-card__titulo"><a [routerLink]="['/tarefas', tarefa.id]">{{ tarefa.titulo }}</a></h2>
-
-  <div class="tarefa-card__marcadores">
-    <span class="marcador marcador--status">{{ tarefa.status }}</span>
-    <span class="marcador marcador--prioridade">Prioridade: {{ tarefa.prioridade }}</span>
+<article
+  class="tarefa-card"
+  [class.card--yellow]="tarefa.prioridade === 'alta' && tarefa.status !== 'concluida'"
+  [class.card--blue]="
+    tarefa.prioridade === 'media' && tarefa.status !== 'em-revisao' && tarefa.status !== 'concluida'
+  "
+  [class.card--purple]="tarefa.status === 'em-revisao' && tarefa.prioridade !== 'alta'"
+>
+  <div class="tarefa-card__top">
+    <span class="deadline"
+      ><app-icon name="calendar" />{{ tarefa.prazo | date: 'dd MMM' : '' : 'pt-BR' }}</span
+    ><span class="task-id">#{{ tarefa.id }}</span>
   </div>
-
-  <dl class="tarefa-card__detalhes">
-    <div>
-      <dt>Responsável</dt>
-      <dd>{{ tarefa.responsavel }}</dd>
-    </div>
-    <div>
-      <dt>Prazo</dt>
-      <dd>{{ tarefa.prazo }}</dd>
-    </div>
-  </dl>
+  <h2 class="tarefa-card__titulo">
+    <a [routerLink]="['/tarefas', tarefa.id]">{{ tarefa.titulo }}</a>
+  </h2>
+  @if (tarefa.descricao) {
+    <p class="tarefa-card__descricao">{{ tarefa.descricao }}</p>
+  }
+  <span class="status">{{ statusLabels[tarefa.status] }}</span>
+  <footer>
+    <span class="priority"
+      ><span aria-hidden="true">●</span> {{ prioridadeLabels[tarefa.prioridade] }} prioridade</span
+    ><span
+      class="avatar"
+      [title]="tarefa.responsavel || 'Sem responsável'"
+      [attr.aria-label]="'Responsável: ' + (tarefa.responsavel || 'não atribuído')"
+      >{{ iniciais(tarefa.responsavel) }}</span
+    >
+  </footer>
 </article>

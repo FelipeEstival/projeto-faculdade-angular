@@ -1,11 +1,4 @@
-
-import {
-  ChangeDetectionStrategy,
-  Component,
-  afterNextRender,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import type { Projeto } from '../../../tipos';
 import { TarefasService } from '../../services/tarefas.service';
@@ -24,9 +17,7 @@ import { TarefasService } from '../../services/tarefas.service';
         <p role="status">Carregando projetos...</p>
       } @else if (erro()) {
         <p role="alert">{{ erro() }}</p>
-        <button type="button" (click)="carregar()">
-          Tentar novamente
-        </button>
+        <button type="button" (click)="carregar()">Tentar novamente</button>
       } @else {
         @for (projeto of projetos(); track projeto.id) {
           <article>
@@ -52,26 +43,7 @@ import { TarefasService } from '../../services/tarefas.service';
       }
     </section>
   `,
-  styles: `
-    .cabecalho-projetos { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
-    .cabecalho-projetos h1 { margin: 0; }
-    .botao-novo-projeto { padding: 0.65rem 1rem; color: white; background: var(--cor-primaria); border-radius: 6px; font-weight: 600; text-decoration: none; }
-    .botao-novo-projeto:hover { filter: brightness(0.94); }
-    article {
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-
-    article h2 {
-      margin-top: 0;
-    }
-
-    article a {
-      color: #2457a7;
-    }
-  `,
+  styleUrl: './projetos.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Projetos {
@@ -96,7 +68,7 @@ export class Projetos {
       },
       error: () => {
         this.erro.set(
-          'Não foi possível carregar os projetos. Verifique se a API está funcionando.'
+          'Não foi possível carregar os projetos. Verifique se a API está funcionando.',
         );
         this.carregando.set(false);
       },

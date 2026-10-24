@@ -1,0 +1,7 @@
+section {
+  max-width: 780px;
+  margin: 0 auto;
+}
+[role='alert'] {
+  color: var(--cor-erro);
+}

@@ -37,3 +37,13 @@
   background: var(--cor-superficie);
   color: var(--cor-texto-suave);
 }
+
+.pagina-detalhe > a:last-child {
+  display: inline-flex;
+  margin-top: 24px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  color: white;
+  background: var(--cor-primaria);
+  text-decoration: none;
+}
