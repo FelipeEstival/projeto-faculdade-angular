@@ -22,12 +22,19 @@ import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
         <p>{{ atual.descricao }}</p>
         <p><a [routerLink]="['/projetos', atual.id, 'editar']">Editar projeto</a></p>
         <dl>
-          <dt>ID</dt><dd>{{ atual.id }}</dd>
-          <dt>Disciplina</dt><dd>{{ atual.disciplina }}</dd>
-          <dt>Criado em</dt><dd>{{ atual.criadoEm }}</dd>
+          <dt>ID</dt>
+          <dd>{{ atual.id }}</dd>
+          <dt>Disciplina</dt>
+          <dd>{{ atual.disciplina }}</dd>
+          <dt>Criado em</dt>
+          <dd>{{ atual.criadoEm }}</dd>
         </dl>
         <h2>Tarefas do projeto</h2>
-        <p><a routerLink="/tarefas/nova" [queryParams]="{ projetoId: atual.id }">Nova tarefa neste projeto</a></p>
+        <p>
+          <a routerLink="/tarefas/nova" [queryParams]="{ projetoId: atual.id }"
+            >Nova tarefa neste projeto</a
+          >
+        </p>
         <div class="tarefas-grid">
           @for (tarefa of atual.tarefas; track tarefa.id) {
             <app-tarefa-card [tarefa]="tarefa" />
@@ -38,10 +45,7 @@ import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
       }
     </section>
   `,
-  styles: `
-    .tarefas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 1rem; }
-    dt { font-weight: 600; } dd { margin: 0 0 1rem; }
-  `,
+  styleUrl: './detalhe-projeto.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetalheProjeto {
@@ -55,19 +59,33 @@ export class DetalheProjeto {
     // A inscrição acompanha mudanças do id e cancela requisições anteriores.
     const dados = this.route.paramMap.pipe(
       map((params) => params.get('id')),
-      tap(() => { this.carregando.set(true); this.erro.set(''); this.projeto.set(null); }),
-      switchMap((id) => id === null ? of(null) : this.api.getProjetoComTarefas(id).pipe(
-        catchError((erro: HttpErrorResponse) => {
-          this.erro.set(erro.status === 404 ? 'Projeto não encontrado.' : 'Não foi possível carregar o projeto. Verifique se a API está funcionando.');
-          return of(null);
-        }),
-      )),
+      tap(() => {
+        this.carregando.set(true);
+        this.erro.set('');
+        this.projeto.set(null);
+      }),
+      switchMap((id) =>
+        id === null
+          ? of(null)
+          : this.api.getProjetoComTarefas(id).pipe(
+              catchError((erro: HttpErrorResponse) => {
+                this.erro.set(
+                  erro.status === 404
+                    ? 'Projeto não encontrado.'
+                    : 'Não foi possível carregar o projeto. Verifique se a API está funcionando.',
+                );
+                return of(null);
+              }),
+            ),
+      ),
       takeUntilDestroyed(),
     );
-    afterNextRender(() => dados.subscribe((projeto) => {
-      this.projeto.set(projeto);
-      if (!projeto && !this.erro()) this.erro.set('Projeto não encontrado.');
-      this.carregando.set(false);
-    }));
+    afterNextRender(() =>
+      dados.subscribe((projeto) => {
+        this.projeto.set(projeto);
+        if (!projeto && !this.erro()) this.erro.set('Projeto não encontrado.');
+        this.carregando.set(false);
+      }),
+    );
   }
 }

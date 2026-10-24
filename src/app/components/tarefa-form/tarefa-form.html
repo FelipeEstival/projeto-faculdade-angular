@@ -1,10 +1,4 @@
-
-<form
-  #formulario="ngForm"
-  class="tarefa-form"
-  (ngSubmit)="enviar(formulario)"
-  novalidate
->
+<form #formulario="ngForm" class="tarefa-form" (ngSubmit)="enviar(formulario)" novalidate>
   <fieldset [disabled]="enviando" class="campos-formulario">
     <div class="campo">
       <label for="titulo-tarefa">Título</label>
@@ -36,7 +30,9 @@
         required
         #descricao="ngModel"
         [attr.aria-invalid]="descricao.invalid && descricao.touched ? 'true' : null"
-        [attr.aria-describedby]="descricao.invalid && descricao.touched ? 'erro-descricao-tarefa' : null"
+        [attr.aria-describedby]="
+          descricao.invalid && descricao.touched ? 'erro-descricao-tarefa' : null
+        "
       ></textarea>
 
       @if (descricao.invalid && descricao.touched) {
@@ -55,8 +51,16 @@
         required
         [disabled]="carregandoProjetos || !!erroProjetos"
         #projetoId="ngModel"
-        [attr.aria-invalid]="projetoId.invalid && projetoId.touched && !carregandoProjetos && !erroProjetos ? 'true' : null"
-        [attr.aria-describedby]="projetoId.invalid && projetoId.touched && !carregandoProjetos && !erroProjetos ? 'erro-projeto-tarefa' : null"
+        [attr.aria-invalid]="
+          projetoId.invalid && projetoId.touched && !carregandoProjetos && !erroProjetos
+            ? 'true'
+            : null
+        "
+        [attr.aria-describedby]="
+          projetoId.invalid && projetoId.touched && !carregandoProjetos && !erroProjetos
+            ? 'erro-projeto-tarefa'
+            : null
+        "
       >
         <option value="">Selecione um projeto</option>
 
@@ -79,12 +83,7 @@
     <div class="campos-duplos">
       <div class="campo">
         <label for="status-tarefa">Status</label>
-        <select
-          id="status-tarefa"
-          name="status"
-          [(ngModel)]="dados.status"
-          required
-        >
+        <select id="status-tarefa" name="status" [(ngModel)]="dados.status" required>
           @for (opcao of statusOpcoes; track opcao.valor) {
             <option [value]="opcao.valor">{{ opcao.texto }}</option>
           }
@@ -93,12 +92,7 @@
 
       <div class="campo">
         <label for="prioridade-tarefa">Prioridade</label>
-        <select
-          id="prioridade-tarefa"
-          name="prioridade"
-          [(ngModel)]="dados.prioridade"
-          required
-        >
+        <select id="prioridade-tarefa" name="prioridade" [(ngModel)]="dados.prioridade" required>
           @for (opcao of prioridadeOpcoes; track opcao.valor) {
             <option [value]="opcao.valor">{{ opcao.texto }}</option>
           }
@@ -117,7 +111,9 @@
           required
           #responsavel="ngModel"
           [attr.aria-invalid]="responsavel.invalid && responsavel.touched ? 'true' : null"
-          [attr.aria-describedby]="responsavel.invalid && responsavel.touched ? 'erro-responsavel-tarefa' : null"
+          [attr.aria-describedby]="
+            responsavel.invalid && responsavel.touched ? 'erro-responsavel-tarefa' : null
+          "
         />
 
         @if (responsavel.invalid && responsavel.touched) {
@@ -141,27 +137,20 @@
         />
 
         @if (prazo.invalid && prazo.touched) {
-          <small id="erro-prazo-tarefa" class="erro" role="alert">
-            Erro: informe o prazo.
-          </small>
+          <small id="erro-prazo-tarefa" class="erro" role="alert"> Erro: informe o prazo. </small>
         }
       </div>
     </div>
   </fieldset>
 
   <div class="acoes">
-    <button
-      type="button"
-      class="botao-secundario"
-      [disabled]="enviando"
-      (click)="cancelar.emit()"
-    >
+    <button type="button" class="botao-secundario" [disabled]="enviando" (click)="cancelar.emit()">
       Cancelar
     </button>
 
     <button
       type="submit"
-      [disabled]="carregandoProjetos || !!erroProjetos || enviando"
+      [disabled]="formulario.invalid || carregandoProjetos || !!erroProjetos || enviando"
     >
       {{ enviando ? 'Salvando...' : tarefa ? 'Salvar alterações' : 'Criar tarefa' }}
     </button>

@@ -1,0 +1,50 @@
+.cabecalho-projetos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.cabecalho-projetos h1 {
+  margin: 0;
+}
+.botao-novo-projeto {
+  padding: 0.65rem 1rem;
+  color: white;
+  background: var(--cor-primaria);
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.botao-novo-projeto:hover {
+  filter: brightness(0.94);
+}
+article {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 20px;
+}
+
+article h2 {
+  margin-top: 0;
+}
+
+article a {
+  color: #a8bfff;
+}
+
+article {
+  background: radial-gradient(at 100% 0%, #6850bd20, transparent 65%), var(--cor-superficie);
+  padding: 28px;
+}
+article p {
+  max-width: 75ch;
+}
+.cabecalho-projetos {
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+article h2 {
+  font-size: 22px;
+}
