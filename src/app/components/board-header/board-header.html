@@ -1,6 +1,6 @@
 <header class="page-top">
   <div>
-    <p class="eyebrow">Workspace <span>/</span> Projetos</p>
+    <p class="eyebrow">Codadores <span>/</span> Projetos</p>
     <h1 id="titulo-tarefas">Seu próximo grande projeto<span>.</span></h1>
   </div>
   <a class="top-link" routerLink="/projetos">Todos os projetos <span aria-hidden="true">↗</span></a>
@@ -10,7 +10,7 @@
   <div class="banner-main">
     <p class="eyebrow">PLANEJE. CRIE. ENTREGUE.</p>
     <div class="project-title">
-      <h2>{{ projetoAtual()?.nome || 'Quickit Project' }}</h2>
+      <h2>{{ projetoAtual()?.nome || 'Projeto Codadores' }}</h2>
       <button
         type="button"
         class="glass-pill"
@@ -49,30 +49,6 @@
         </select></label
       >
     }
-  </div>
-  <div class="banner-team">
-    <span class="team-label">PESSOAS QUE FAZEM ACONTECER</span>
-    <div class="team-avatars">
-      @for (membro of membros().slice(0, 4); track membro) {
-        <span class="avatar" [title]="membro" [attr.aria-label]="membro">{{
-          iniciais(membro)
-        }}</span>
-      }
-      @if (membros().length > 4) {
-        <span class="avatar">+{{ membros().length - 4 }}</span>
-      }
-      @if (!membros().length) {
-        <span class="no-members">Sem responsáveis atribuídos</span>
-      }
-    </div>
-    <button
-      type="button"
-      class="glass-pill invite"
-      disabled
-      title="Convites indisponíveis: o projeto ainda não possui cadastro de usuários"
-    >
-      <app-icon name="plus" /> Invite member
-    </button>
   </div>
 </section>
 <div class="board-tabs">

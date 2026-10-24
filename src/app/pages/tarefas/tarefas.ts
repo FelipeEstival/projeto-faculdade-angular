@@ -61,13 +61,6 @@ export class Tarefas {
   protected readonly tarefasProjeto = computed(() =>
     this.tarefas().filter((t) => !this.projetoId() || t.projetoId === this.projetoId()),
   );
-  protected readonly membros = computed(() => [
-    ...new Set(
-      this.tarefasProjeto()
-        .map((t) => t.responsavel.trim())
-        .filter(Boolean),
-    ),
-  ]);
   protected readonly concluidas = computed(
     () => this.tarefasProjeto().filter((t) => t.status === 'concluida').length,
   );

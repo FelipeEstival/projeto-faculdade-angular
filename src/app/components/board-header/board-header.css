@@ -39,7 +39,9 @@
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  padding: 30px 32px;
+  padding: 40px 32px;
+  align-items: center;
+  min-height: 230px;
   border: 1px solid #ffffff1c;
   border-radius: 24px;
   background:
@@ -63,6 +65,7 @@
     0 0 0 110px #b7b0ff06;
 }
 .banner-main {
+  width: 100%;
   min-width: 0;
 }
 .banner-main .eyebrow {
@@ -92,9 +95,7 @@
   border-color: #ffffff30;
   backdrop-filter: blur(12px);
 }
-.glass-pill:disabled {
-  opacity: 0.65;
-}
+
 .banner-description {
   color: #d0d8fa;
   font-size: 11px;
@@ -137,42 +138,7 @@
 .project-date app-icon {
   transform: scale(0.7);
 }
-.banner-team {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  min-width: 190px;
-  gap: 14px;
-}
-.team-label {
-  color: #d0d8fa;
-  font-size: 8px;
-  letter-spacing: 0.12em;
-}
-.team-avatars {
-  display: flex;
-  padding-left: 8px;
-}
-.team-avatars .avatar {
-  margin-left: -8px;
-  border-color: #4057b0;
-  width: 35px;
-  height: 35px;
-}
-.team-avatars .avatar:nth-child(2n) {
-  background: #b6dfeb;
-}
-.team-avatars .avatar:nth-child(3n) {
-  background: #f7c99d;
-}
-.no-members {
-  font-size: 10px;
-  color: #d0d8fa;
-}
-.invite {
-  padding: 7px 13px;
-}
+
 .project-picker {
   display: flex;
   align-items: center;
@@ -226,27 +192,13 @@
   font-size: 10px;
   color: #d0d6ef;
 }
-@media (max-width: 1200px) {
-  .banner-team {
-    min-width: 140px;
-  }
-}
+
 @media (max-width: 700px) {
   .project-banner {
     padding: 24px;
     flex-direction: column;
   }
-  .banner-team {
-    align-items: flex-start;
-  }
-  .team-label {
-    display: none;
-  }
-  .banner-team {
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-  }
+
   .page-top {
     align-items: flex-start;
   }

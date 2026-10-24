@@ -26,13 +26,8 @@ export class Icon {
   @Input() name = 'grid';
   readonly paths: Record<string, string> = {
     grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
-    home: 'M3 10l9-7 9 7v10H3z M9 20v-7h6v7',
-    chart: 'M4 20V10 M12 20V4 M20 20v-7',
     tasks: 'M4 4h16v16H4z M8 8h8 M8 12h8 M8 16h4',
     calendar: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16 M8 15h2',
-    users:
-      'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M17 4a4 4 0 0 1 0 8 M22 21v-2a4 4 0 0 0-3-4',
-    deal: 'M3 7h18v14H3z M8 7V3h8v4 M3 12h18 M10 12v3h4v-3',
     search: 'M21 21l-5-5 M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16',
     plus: 'M12 5v14 M5 12h14',
     filter: 'M4 7h16 M7 12h10 M10 17h4',

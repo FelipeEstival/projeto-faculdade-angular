@@ -1,51 +1,24 @@
 <aside class="sidebar">
-  <a class="marca" routerLink="/" aria-label="Quickit — início"
-    ><span class="marca__icone"><app-icon name="grid" /></span>quickit<span class="marca__dot"
-      >.</span
-    ></a
+  <a class="marca" routerLink="/" aria-label="Codadores — início"
+    ><span class="marca__icone"><app-icon name="grid" /></span
+    ><span class="marca__nome">Codadores</span></a
   >
-  <div class="workspace">
-    <span class="workspace__symbol">W</span>
-    <div>Meu workspace<small>Gestão de projetos</small></div>
-    <span aria-hidden="true">⌄</span>
-  </div>
-  <p class="eyebrow">Workspace</p>
   <nav class="menu" aria-label="Navegação principal">
     <a
       class="menu__link"
-      routerLink="/"
+      routerLink="/tarefas"
       routerLinkActive="menu__link--ativo"
-      [routerLinkActiveOptions]="{ exact: true }"
-      ><app-icon name="home" /> Home</a
+      ariaCurrentWhenActive="page"
+      title="Tarefas"
+      ><app-icon name="tasks" /><span>Tarefas</span></a
     >
-    <button class="menu__link" disabled title="Relatórios ainda não disponíveis">
-      <app-icon name="chart" /> Reports <small>Em breve</small>
-    </button>
-    <a class="menu__link" routerLink="/tarefas" routerLinkActive="menu__link--ativo"
-      ><app-icon name="tasks" /> Tasks</a
+    <a
+      class="menu__link"
+      routerLink="/projetos"
+      routerLinkActive="menu__link--ativo"
+      ariaCurrentWhenActive="page"
+      title="Projetos"
+      ><app-icon name="grid" /><span>Projetos</span></a
     >
-    <button class="menu__link" disabled title="Eventos ainda não disponíveis">
-      <app-icon name="calendar" /> Events
-    </button>
-    <button class="menu__link" disabled title="Negócios ainda não disponíveis">
-      <app-icon name="deal" /> Deals
-    </button>
-    <button class="menu__link" disabled title="Usuários ainda não disponíveis">
-      <app-icon name="users" /> Users
-    </button>
   </nav>
-  <p class="eyebrow">Organização</p>
-  <a class="menu__link" routerLink="/projetos" routerLinkActive="menu__link--ativo"
-    ><app-icon name="grid" /> Projetos</a
-  >
-  <div class="sidebar__note">
-    <span class="note-orbit" aria-hidden="true">✦</span><strong>Uma ideia de cada vez.</strong>
-    <p>Transforme planos em projetos e projetos em conquistas.</p>
-    <a routerLink="/projetos/novo">Criar projeto <span aria-hidden="true">↗</span></a>
-  </div>
-  <footer class="profile">
-    <span class="avatar" aria-hidden="true">ME</span>
-    <div><strong>Meu espaço</strong><small>Workspace local</small></div>
-    <span class="profile__badge" title="Modo local" aria-label="Modo local"></span>
-  </footer>
 </aside>
