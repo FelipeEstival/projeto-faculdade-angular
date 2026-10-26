@@ -113,22 +113,9 @@
           </header>
           <div
             class="column-list"
-            cdkDropList
-            [cdkDropListData]="coluna.id"
-            [cdkDropListDisabled]="salvando()"
-            [cdkDropListSortingDisabled]="ordenacao() !== 'manual'"
-            (cdkDropListDropped)="soltar($event)"
           >
             @for (tarefa of coluna.tarefas; track tarefa.id) {
-              <div class="task-wrap" cdkDrag [cdkDragData]="tarefa">
-                <div
-                  class="drag-handle"
-                  cdkDragHandle
-                  title="Arraste para mover a tarefa"
-                  aria-hidden="true"
-                >
-                  ⠿
-                </div>
+              <div class="task-wrap">
                 <app-tarefa-card [tarefa]="tarefa" /><label class="move-control"
                   ><span>Mover para</span
                   ><select
