@@ -64,6 +64,19 @@ O tipo `ProjetoComTarefas`, definido em `src/app/services/projeto-com-tarefas.ts
 `Projeto` com a lista `tarefas: Tarefa[]`. Na API JSON Server, essa lista é carregada com o
 parâmetro `_embed=tarefas`, não por uma chamada separada.
 
+## Busca por título (M4 — issue #8)
+
+Na página **Tarefas**, use o campo **Buscar por título...** para filtrar os cartões
+enquanto digita. A busca considera partes do título, ignora diferenças entre
+maiúsculas e minúsculas e desconsidera espaços no início e no fim do termo.
+Descrição e responsável não entram na pesquisa.
+
+O filtro é combinado com o projeto e a prioridade selecionados, mantendo a
+ordenação atual. Limpar o campo volta a mostrar todas as tarefas que atendem
+aos demais filtros. A busca é local e não altera os dados da API.
+
+Para validar: `npm test -- --watch=false` e `npm run build`.
+
 ## Autores
 
 **Felipe Mauro Estival**

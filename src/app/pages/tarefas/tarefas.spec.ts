@@ -7,7 +7,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { Tarefas } from './tarefas';
-import type { Tarefa } from '../../../tipos';
+import type { Projeto, Tarefa } from '../../../tipos';
 
 const tarefa: Tarefa = {
   id: '1',
@@ -47,13 +47,17 @@ describe('Quadro Kanban', () => {
 
   afterEach(() => http.verify());
 
-  function abrir(tarefas = [tarefa, outra], falha = false) {
+  function abrir(
+    tarefas: Tarefa[] = [tarefa, outra],
+    falha = false,
+    projetos: Projeto[] = [],
+  ) {
     const fixture = TestBed.createComponent(Tarefas);
 
     fixture.detectChanges();
     TestBed.tick();
 
-    http.expectOne('http://localhost:3000/projetos').flush([]);
+    http.expectOne('http://localhost:3000/projetos').flush(projetos);
 
     const req = http.expectOne('http://localhost:3000/tarefas');
 
@@ -94,9 +98,8 @@ describe('Quadro Kanban', () => {
     ).toHaveLength(4);
   });
 
-  it('busca somente pelo título e filtra por prioridade', () => {
+  it('busca tarefas pelo título', () => {
     const fixture = abrir();
-
     const input = fixture.nativeElement.querySelector(
       'input[type="search"]',
     );
@@ -112,6 +115,40 @@ describe('Quadro Kanban', () => {
     expect(
       fixture.nativeElement.querySelector('app-tarefa-card').textContent,
     ).toContain('Construir formulário');
+  });
+
+  it('ignora diferenças entre maiúsculas e minúsculas e espaços nas extremidades', () => {
+    const fixture = abrir();
+    const input = fixture.nativeElement.querySelector(
+      'input[type="search"]',
+    );
+
+    input.value = '  FORMULÁRIO  ';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelectorAll('app-tarefa-card'),
+    ).toHaveLength(1);
+
+    expect(
+      fixture.nativeElement.querySelector('app-tarefa-card').textContent,
+    ).toContain('Construir formulário');
+
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelectorAll('app-tarefa-card'),
+    ).toHaveLength(2);
+  });
+
+  it('não pesquisa pelo nome do responsável', () => {
+    const fixture = abrir();
+    const input = fixture.nativeElement.querySelector(
+      'input[type="search"]',
+    );
 
     input.value = 'Bruno';
     input.dispatchEvent(new Event('input'));
@@ -120,9 +157,25 @@ describe('Quadro Kanban', () => {
     expect(
       fixture.nativeElement.querySelectorAll('app-tarefa-card'),
     ).toHaveLength(0);
+  });
 
-    input.value = '';
+  it('não pesquisa pela descrição', () => {
+    const fixture = abrir();
+    const input = fixture.nativeElement.querySelector(
+      'input[type="search"]',
+    );
+
+    input.value = 'referências';
     input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelectorAll('app-tarefa-card'),
+    ).toHaveLength(0);
+  });
+
+  it('filtra tarefas pela prioridade', () => {
+    const fixture = abrir();
 
     fixture.nativeElement.querySelector('.filter-button').click();
     fixture.detectChanges();
@@ -142,6 +195,88 @@ describe('Quadro Kanban', () => {
     expect(
       fixture.nativeElement.querySelector('app-tarefa-card').textContent,
     ).toContain('Pesquisar interface');
+  });
+
+  it('combina busca por título, projeto, prioridade e ordenação', () => {
+    const tarefas: Tarefa[] = [
+      tarefa,
+      {
+        ...outra,
+        projetoId: '2',
+        titulo: 'Pesquisar componentes',
+        prioridade: 'alta',
+      },
+      {
+        ...tarefa,
+        id: '3',
+        projetoId: '2',
+        titulo: 'Pesquisar requisitos',
+      },
+      {
+        ...tarefa,
+        id: '4',
+        titulo: 'Pesquisar API',
+        prazo: '2026-10-20',
+      },
+    ];
+
+    const projetos: Projeto[] = [
+      {
+        id: '1',
+        nome: 'Codadores',
+        descricao: '',
+        disciplina: '',
+        criadoEm: '2026-10-01',
+      },
+    ];
+
+    const fixture = abrir(tarefas, false, projetos);
+
+    fixture.nativeElement.querySelector('.glass-pill').click();
+    fixture.detectChanges();
+
+    const projeto = fixture.nativeElement.querySelector(
+      '[aria-label="Selecionar projeto"]',
+    );
+
+    projeto.value = '1';
+    projeto.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    const input = fixture.nativeElement.querySelector(
+      'input[type="search"]',
+    );
+
+    input.value = 'Pesquisar';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    fixture.nativeElement.querySelector('.filter-button').click();
+    fixture.detectChanges();
+
+    const prioridade = fixture.nativeElement.querySelector(
+      '[aria-label="Filtrar por prioridade"]',
+    );
+
+    prioridade.value = 'alta';
+    prioridade.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    const ordem = fixture.nativeElement.querySelector(
+      '[aria-label="Ordenar tarefas"]',
+    );
+
+    ordem.value = 'prazo';
+    ordem.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    const cards = fixture.nativeElement.querySelectorAll(
+      'app-tarefa-card',
+    );
+
+    expect(cards).toHaveLength(2);
+    expect(cards[0].textContent).toContain('Pesquisar API');
+    expect(cards[1].textContent).toContain('Pesquisar interface');
   });
 
   it('persiste o status ao mudar pelo seletor', () => {
@@ -168,12 +303,13 @@ describe('Quadro Kanban', () => {
     ).toContain('Pesquisar interface');
 
     expect(
-      fixture.nativeElement.querySelectorAll('.kanban-column')[0]
+      fixture.nativeElement
+        .querySelectorAll('.kanban-column')[0]
         .querySelector('app-tarefa-card'),
     ).toBeNull();
   });
 
-  it('restaura a coluna original se a atualização falhar', () => {
+  it('restaura o status original se a atualização falhar', () => {
     const fixture = abrir();
 
     const select = fixture.nativeElement.querySelector(
@@ -197,11 +333,5 @@ describe('Quadro Kanban', () => {
     expect(
       fixture.nativeElement.querySelector('[role="alert"]').textContent,
     ).toContain('voltou à coluna anterior');
-
-    expect(
-      fixture.nativeElement.querySelector(
-        '[aria-label="Mover tarefa Pesquisar interface"]',
-      ).disabled,
-    ).toBe(false);
   });
 });

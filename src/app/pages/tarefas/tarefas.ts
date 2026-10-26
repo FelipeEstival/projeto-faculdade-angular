@@ -1,3 +1,4 @@
+
 import { RouterLink } from '@angular/router';
 import {
   ChangeDetectionStrategy,
@@ -27,6 +28,7 @@ import { TarefasService } from '../../services/tarefas.service';
 })
 export class Tarefas {
   private readonly api = inject(TarefasService);
+
   protected readonly tarefas = signal<Tarefa[]>([]);
   protected readonly projetos = signal<Projeto[]>([]);
   protected readonly carregando = signal(true);
