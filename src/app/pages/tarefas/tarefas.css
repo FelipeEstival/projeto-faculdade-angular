@@ -1,72 +1,280 @@
 :host {
   display: block;
 }
-
-.pagina-tarefas {
-  width: min(100%, 1120px);
-  margin: 0 auto;
-}
-
-.pagina-tarefas__cabecalho {
+.toolbar,
+.toolbar-main,
+.toolbar-actions {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+.toolbar {
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 28px;
+  margin: 24px 0;
+  flex-wrap: wrap;
 }
-
-.pagina-tarefas__sobretitulo {
-  margin: 0 0 8px;
-  color: var(--cor-primaria);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.toolbar-main {
+  gap: 22px;
 }
-
-.pagina-tarefas__cabecalho h1 {
-  margin: 0;
-  font-size: clamp(1.75rem, 4vw, 2.25rem);
-  line-height: 1.2;
+.toolbar-main strong {
+  font-size: 19px;
 }
-
-.pagina-tarefas__descricao {
-  margin: 10px 0 0;
+.toolbar-main strong span {
+  font-size: 12px;
+  font-weight: 400;
   color: var(--cor-texto-suave);
-  line-height: 1.5;
 }
-
-.pagina-tarefas__total {
-  flex: 0 0 auto;
-  padding: 7px 12px;
+.toolbar .button {
+  font-size: 11px;
+  padding: 9px 14px;
+}
+.search {
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
   border: 1px solid var(--cor-borda);
   border-radius: 999px;
-  background: var(--cor-superficie);
   color: var(--cor-texto-suave);
-  font-size: 0.875rem;
-  font-weight: 600;
 }
-
-.tarefas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+.search input {
+  width: 170px;
+  background: transparent;
+  padding: 9px;
+  border: none;
+  border-radius: 999px;
+  font-size: 11px;
+}
+.filter-button,
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  font-size: 11px;
+}
+.filter-button {
+  padding: 9px 12px;
+}
+.active {
+  background: var(--cor-primaria-suave);
+}
+.sort {
+  border: 1px solid var(--cor-borda);
+  border-radius: 999px;
+  padding-left: 12px;
+}
+.sort select {
+  border: none;
+  padding: 9px 10px 9px 0;
+  background: transparent;
+  font-size: 11px;
+}
+.sort option {
+  background: var(--cor-superficie);
+}
+.filter-panel {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 16px;
-}
-
-.estado {
-  margin: 0;
-  padding: 24px;
-  border: 1px dashed var(--cor-borda);
-  border-radius: var(--raio);
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 16px;
   background: var(--cor-superficie);
-  color: var(--cor-texto-suave);
-  text-align: center;
+  font-size: 12px;
 }
-
-@media (max-width: 560px) {
-  .pagina-tarefas__cabecalho {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 16px;
+.filter-panel label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.filter-panel select {
+  background: var(--cor-fundo);
+}
+.error {
+  margin-bottom: 20px;
+}
+.error button {
+  margin-left: 12px;
+}
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(240px, 1fr));
+  align-items: start;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+}
+.kanban-column {
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 20px;
+  padding: 14px 12px 12px;
+  min-width: 0;
+}
+.column-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 2px 17px;
+}
+.column-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.column-header h2 {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  margin: 0;
+}
+.column-count {
+  font-size: 9px;
+  border-radius: 6px;
+  background: #ffffff08;
+  padding: 1px 6px;
+  color: var(--cor-texto-suave);
+}
+.column-add {
+  margin-left: auto;
+  color: var(--cor-texto-suave);
+}
+.column-menu {
+  position: relative;
+  color: var(--cor-texto-suave);
+}
+.column-menu summary {
+  display: flex;
+  cursor: pointer;
+  list-style: none;
+}
+.column-menu summary::-webkit-details-marker {
+  display: none;
+}
+.column-menu > div {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  z-index: 5;
+  width: 190px;
+  padding: 6px;
+  background: #272738;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px #0008;
+}
+.column-menu button {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  border-radius: 8px;
+  font-size: 11px;
+}
+.column-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 260px;
+}
+.task-wrap {
+  position: relative;
+  border-radius: 18px;
+  background: var(--cor-elevada);
+}
+.drag-handle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+  cursor: grab;
+  touch-action: none;
+  color: #a5a7bf;
+}
+.drag-handle:active {
+  cursor: grabbing;
+}
+.move-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px 8px;
+  color: #b7b9cf;
+  font-size: 9px;
+}
+.move-control select {
+  padding: 4px;
+  max-width: 140px;
+  font-size: 8px;
+  border: 0;
+  background: transparent;
+}
+.move-control option {
+  background: var(--cor-superficie);
+}
+.empty-column {
+  min-height: 235px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  color: #8588a4;
+  font-size: 11px;
+  border: 1px dashed #ffffff10;
+  border-radius: 16px;
+}
+.empty-column small {
+  font-size: 9px;
+}
+.add-task {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 0 3px;
+  color: var(--cor-texto-suave);
+  font-size: 10px;
+  text-decoration: none;
+}
+.board-footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #a5a7bf;
+  font-size: 9px;
+  margin-top: 8px;
+}
+.live-dot {
+  display: inline-block;
+  height: 5px;
+  width: 5px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: #8fe0b6;
+}
+@media (max-width: 1200px) {
+  .toolbar-actions {
+    flex-wrap: wrap;
+  }
+  .kanban {
+    grid-template-columns: repeat(4, 255px);
+  }
+}
+@media (max-width: 700px) {
+  .toolbar-actions {
+    gap: 8px;
+    width: 100%;
+  }
+  .search {
+    width: 100%;
+  }
+  .search input {
+    width: 100%;
+    min-width: 0;
   }
 }

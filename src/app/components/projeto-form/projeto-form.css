@@ -4,10 +4,10 @@
 
 .projeto-form {
   display: grid;
-  gap: 16px;
+  gap: 22px;
   max-width: 680px;
-  padding: 20px;
-  background: var(--cor-superficie);
+  padding: 28px;
+  background: var(--cor-fundo);
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio);
 }
@@ -28,9 +28,9 @@
   padding: 10px 12px;
   color: var(--cor-texto);
   font: inherit;
-  background: var(--cor-superficie);
+  background: var(--cor-fundo);
   border: 1px solid var(--cor-borda);
-  border-radius: 6px;
+  border-radius: 12px;
 }
 
 .campo input:focus-visible,
@@ -42,14 +42,14 @@
 
 .campo input[aria-invalid='true'],
 .campo textarea[aria-invalid='true'] {
-  border: 2px solid #b42318;
+  border: 2px solid var(--cor-erro);
 }
 
 .erro {
-  color: #b42318;
+  color: var(--cor-erro);
   font-weight: 600;
   padding-left: 8px;
-  border-left: 4px solid #b42318;
+  border-left: 4px solid var(--cor-erro);
 }
 
 .acoes {
@@ -63,7 +63,7 @@
   padding: 10px 14px;
   font: inherit;
   border: 1px solid var(--cor-primaria);
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
 }
 
@@ -81,4 +81,17 @@
   color: var(--cor-texto);
   background: transparent;
   border-color: var(--cor-borda);
+}
+
+.acoes button {
+  border-radius: 999px;
+  padding: 11px 22px;
+}
+.campo label {
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+.campo textarea {
+  resize: vertical;
+  min-height: 100px;
 }

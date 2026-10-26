@@ -25,6 +25,7 @@ export class TarefaForm implements OnInit, OnChanges {
   @Input() tarefa: Tarefa | null = null;
   @Input() enviando = false;
   @Input() projetoIdInicial = '';
+  @Input() statusInicial: Status = 'a-fazer';
   private readonly cdr = inject(ChangeDetectorRef);
   @Output() salvar = new EventEmitter<NovaTarefa>();
   @Output() cancelar = new EventEmitter<void>();
@@ -55,7 +56,7 @@ export class TarefaForm implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['tarefa'] || changes['projetoIdInicial']) {
+    if (changes['tarefa'] || changes['projetoIdInicial'] || changes['statusInicial']) {
       this.dados = this.tarefa
         ? {
             projetoId: this.tarefa.projetoId,
@@ -94,7 +95,8 @@ export class TarefaForm implements OnInit, OnChanges {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.erroProjetos = 'Não foi possível carregar os projetos. Verifique se a API está funcionando.';
+        this.erroProjetos =
+          'Não foi possível carregar os projetos. Verifique se a API está funcionando.';
         this.carregandoProjetos = false;
         this.cdr.markForCheck();
       },
@@ -106,7 +108,7 @@ export class TarefaForm implements OnInit, OnChanges {
       projetoId: this.projetoIdInicial,
       titulo: '',
       descricao: '',
-      status: 'a-fazer',
+      status: this.statusInicial,
       prioridade: 'media',
       responsavel: '',
       prazo: '',

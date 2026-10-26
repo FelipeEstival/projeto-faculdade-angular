@@ -1,8 +1,4 @@
 <div class="layout">
-  <app-header />
-
-  <!-- Aqui é renderizada a página da rota atual (Tarefas, Projetos...) -->
-  <main class="conteudo">
-    <router-outlet />
-  </main>
+  <a class="skip-link" href="#main-content">Ir ao conteúdo</a><app-header />
+  <main id="main-content" class="conteudo" tabindex="-1"><router-outlet /></main>
 </div>

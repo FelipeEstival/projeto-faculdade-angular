@@ -1,14 +1,24 @@
-<header class="header">
-  <a class="marca" routerLink="/">
-    <span class="marca__icone" aria-hidden="true">▦</span>
-    <span class="marca__nome">Kanban</span>
-  </a>
- 
+<aside class="sidebar">
+  <a class="marca" routerLink="/" aria-label="Codadores — início"
+    ><span class="marca__icone"><app-icon name="grid" /></span
+    ><span class="marca__nome">Codadores</span></a
+  >
   <nav class="menu" aria-label="Navegação principal">
-    @for (item of itensMenu; track item.caminho) {
-      <a class="menu__link" [routerLink]="item.caminho" routerLinkActive="menu__link--ativo">
-        {{ item.label }}
-      </a>
-    }
+    <a
+      class="menu__link"
+      routerLink="/tarefas"
+      routerLinkActive="menu__link--ativo"
+      ariaCurrentWhenActive="page"
+      title="Tarefas"
+      ><app-icon name="tasks" /><span>Tarefas</span></a
+    >
+    <a
+      class="menu__link"
+      routerLink="/projetos"
+      routerLinkActive="menu__link--ativo"
+      ariaCurrentWhenActive="page"
+      title="Projetos"
+      ><app-icon name="grid" /><span>Projetos</span></a
+    >
   </nav>
-</header>
+</aside>

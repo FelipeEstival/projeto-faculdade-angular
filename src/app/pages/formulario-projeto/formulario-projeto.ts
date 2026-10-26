@@ -41,38 +41,7 @@ import { TarefasService } from '../../services/tarefas.service';
       }
     </section>
   `,
-  styles: `
-    .pagina-formulario-projeto {
-      display: grid;
-      gap: 1rem;
-    }
-    .voltar {
-      width: fit-content;
-      color: var(--cor-primaria);
-    }
-    header {
-      display: grid;
-      gap: 0.35rem;
-    }
-    h1,
-    p {
-      margin: 0;
-    }
-    .sobretitulo {
-      color: var(--cor-texto-suave);
-      font-size: 0.875rem;
-      font-weight: 600;
-    }
-    .descricao {
-      color: var(--cor-texto-suave);
-    }
-    .estado {
-      margin: 0;
-    }
-    .erro {
-      color: #b42318;
-    }
-  `,
+  styleUrl: './formulario-projeto.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormularioProjeto {

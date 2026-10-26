@@ -1,0 +1,68 @@
+<header class="page-top">
+  <div>
+    <p class="eyebrow">Codadores <span>/</span> Projetos</p>
+    <h1 id="titulo-tarefas">Seu próximo grande projeto<span>.</span></h1>
+  </div>
+  <a class="top-link" routerLink="/projetos">Todos os projetos <span aria-hidden="true">↗</span></a>
+</header>
+<section class="project-banner" aria-label="Resumo do projeto">
+  <div class="banner-orbit" aria-hidden="true"></div>
+  <div class="banner-main">
+    <p class="eyebrow">PLANEJE. CRIE. ENTREGUE.</p>
+    <div class="project-title">
+      <h2>{{ projetoAtual()?.nome || 'Projeto Codadores' }}</h2>
+      <button
+        type="button"
+        class="glass-pill"
+        (click)="escolherProjeto.set(!escolherProjeto())"
+        [attr.aria-expanded]="escolherProjeto()"
+        aria-controls="project-picker"
+      >
+        Change <span aria-hidden="true">⌄</span>
+      </button>
+    </div>
+    <p class="banner-description">
+      {{ projetoAtual()?.descricao || 'Todas as ideias, pessoas e entregas. Um só lugar.' }}
+    </p>
+    <div class="project-meta">
+      <span class="tag tag--purple">Research</span><span class="tag tag--blue">Design</span
+      ><span class="tag tag--peach">Development</span>
+      @if (projetoAtual(); as projeto) {
+        <span class="project-date"
+          ><app-icon name="calendar" /> Criado em {{ projeto.criadoEm }}</span
+        >
+      } @else {
+        <span class="project-date">Visão geral · Todos os projetos</span>
+      }
+    </div>
+    @if (escolherProjeto()) {
+      <label class="project-picker" id="project-picker"
+        >Projeto<select
+          aria-label="Selecionar projeto"
+          [value]="projetoId()"
+          (change)="selecionarProjeto.emit($any($event.target).value)"
+        >
+          <option value="">Todos os projetos</option>
+          @for (p of projetos(); track p.id) {
+            <option [value]="p.id">{{ p.nome }}</option>
+          }
+        </select></label
+      >
+    }
+  </div>
+</section>
+<div class="board-tabs">
+  <span class="board-tab"><app-icon name="grid" /> Quadro Kanban</span>
+  <div class="progress-meta">
+    <span>{{ concluidas() }}/{{ total() }} concluídas</span
+    ><span
+      class="progress-track"
+      role="progressbar"
+      [attr.aria-valuenow]="progresso()"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-label="Progresso das tarefas"
+      ><i [style.width.%]="progresso()"></i></span
+    ><strong>{{ progresso() }}%</strong>
+  </div>
+</div>
