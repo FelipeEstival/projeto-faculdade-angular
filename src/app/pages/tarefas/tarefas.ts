@@ -74,8 +74,7 @@ export class Tarefas {
     const lista = this.tarefasProjeto().filter(
       (t) =>
         (!this.prioridade() || t.prioridade === this.prioridade()) &&
-        (!termo ||
-          `${t.titulo} ${t.descricao} ${t.responsavel}`.toLocaleLowerCase('pt-BR').includes(termo)),
+        (!termo || t.titulo.toLocaleLowerCase('pt-BR').includes(termo)),
     );
     if (this.ordenacao() === 'prazo') lista.sort((a, b) => a.prazo.localeCompare(b.prazo));
     if (this.ordenacao() === 'prioridade') {
