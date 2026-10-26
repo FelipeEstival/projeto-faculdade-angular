@@ -5,7 +5,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { By } from '@angular/platform-browser';
 import { CdkDropList } from '@angular/cdk/drag-drop';
 import { Tarefas } from './tarefas';
-import type { Tarefa } from '../../../tipos';
+import type { Projeto, Tarefa } from '../../../tipos';
 
 const tarefa: Tarefa = {
   id: '1',
@@ -36,11 +36,11 @@ describe('Quadro Kanban', () => {
     http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
-  function abrir(tarefas = [tarefa, outra], falha = false) {
+  function abrir(tarefas = [tarefa, outra], falha = false, projetos: Projeto[] = []) {
     const fixture = TestBed.createComponent(Tarefas);
     fixture.detectChanges();
     TestBed.tick();
-    http.expectOne('http://localhost:3000/projetos').flush([]);
+    http.expectOne('http://localhost:3000/projetos').flush(projetos);
     const req = http.expectOne('http://localhost:3000/tarefas');
     if (falha) req.flush({}, { status: 500, statusText: 'Error' });
     else req.flush(tarefas);
@@ -59,17 +59,64 @@ describe('Quadro Kanban', () => {
     expect(fixture.nativeElement.textContent).toContain('Nenhuma tarefa para exibir.');
     expect(fixture.nativeElement.querySelectorAll('.column-list')).toHaveLength(4);
   });
-  it('busca por responsável e filtra prioridade sem alterar os dados', () => {
+  it('busca por parte do título ignorando caixa e espaços nas extremidades', () => {
     const fixture = abrir();
     const input = fixture.nativeElement.querySelector('input[type="search"]');
-    input.value = 'Bruno';
+    input.value = '  FORMULÁRIO  ';
     input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelectorAll('app-tarefa-card')).toHaveLength(1);
     expect(fixture.nativeElement.querySelector('app-tarefa-card').textContent).toContain(
       'Construir formulário',
     );
+    expect(fixture.nativeElement.querySelectorAll('.column-count')[0].textContent.trim()).toBe('0');
+    expect(fixture.nativeElement.querySelectorAll('.column-count')[1].textContent.trim()).toBe('1');
     input.value = '';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('app-tarefa-card')).toHaveLength(2);
+    input.value = '   ';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('app-tarefa-card')).toHaveLength(2);
+  });
+  it.each(['Bruno', 'referências'])(
+    'não retorna tarefas quando "%s" aparece apenas no responsável ou na descrição',
+    (termo) => {
+      const fixture = abrir();
+      const input = fixture.nativeElement.querySelector('input[type="search"]');
+      input.value = termo;
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelectorAll('app-tarefa-card')).toHaveLength(0);
+      expect(fixture.nativeElement.textContent).toContain(
+        'Nenhuma tarefa encontrada para os filtros selecionados.',
+      );
+      expect(fixture.nativeElement.textContent).not.toContain('Nenhuma tarefa para exibir.');
+      input.value = '';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelectorAll('app-tarefa-card')).toHaveLength(2);
+    },
+  );
+  it('combina busca por título com projeto, prioridade e ordenação', () => {
+    const fixture = abrir(
+      [
+        tarefa,
+        { ...outra, titulo: 'Pesquisar componentes' },
+        { ...tarefa, id: '3', projetoId: '2', titulo: 'Pesquisar requisitos' },
+        { ...tarefa, id: '4', titulo: 'Pesquisar API', prazo: '2026-10-20' },
+      ],
+      false,
+      [{ id: '1', nome: 'Codadores', descricao: '', disciplina: '', criadoEm: '2026-10-01' }],
+    );
+    fixture.nativeElement.querySelector('.glass-pill').click();
+    fixture.detectChanges();
+    const projeto = fixture.nativeElement.querySelector('[aria-label="Selecionar projeto"]');
+    projeto.value = '1';
+    projeto.dispatchEvent(new Event('change'));
+    const input = fixture.nativeElement.querySelector('input[type="search"]');
+    input.value = 'Pesquisar';
     input.dispatchEvent(new Event('input'));
     fixture.nativeElement.querySelector('.filter-button').click();
     fixture.detectChanges();
@@ -77,10 +124,22 @@ describe('Quadro Kanban', () => {
     select.value = 'alta';
     select.dispatchEvent(new Event('change'));
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelectorAll('app-tarefa-card')).toHaveLength(1);
-    expect(fixture.nativeElement.querySelector('app-tarefa-card').textContent).toContain(
-      'Pesquisar interface',
-    );
+    const ordem = fixture.nativeElement.querySelector('[aria-label="Ordenar tarefas"]');
+    ordem.value = 'prazo';
+    ordem.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    const cards = fixture.nativeElement.querySelectorAll('app-tarefa-card');
+    expect(cards).toHaveLength(2);
+    expect(cards[0].textContent).toContain('Pesquisar API');
+    expect(cards[1].textContent).toContain('Pesquisar interface');
+    input.value = 'inexistente';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('app-tarefa-card')).toHaveLength(0);
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('app-tarefa-card')).toHaveLength(2);
   });
   it('persiste o status ao soltar em outra coluna', () => {
     const fixture = abrir();
