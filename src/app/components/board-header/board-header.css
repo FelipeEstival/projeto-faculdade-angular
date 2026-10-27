@@ -226,3 +226,8 @@
     margin-left: 0;
   }
 }
+
+.view-switch { display: flex; gap: 20px; flex-wrap: wrap; }
+.view-switch .board-tab { text-decoration: none; opacity: .65; border-bottom: 2px solid transparent; padding: 10px 0; }
+.view-switch .view-active { opacity: 1; border-bottom-color: var(--cor-primaria); }
+.view-switch a:focus-visible { outline: 2px solid var(--cor-primaria); outline-offset: 4px; }
