@@ -38,6 +38,7 @@ export class Tarefas {
   protected readonly busca = signal('');
   protected readonly projetoId = signal('');
   protected readonly prioridade = signal('');
+  protected readonly status = signal('');
   protected readonly ordenacao = signal('manual');
   protected readonly filtrosAbertos = signal(false);
 
