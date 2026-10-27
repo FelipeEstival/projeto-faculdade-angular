@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
  
 export const routes: Routes = [
   {
-    path: '', pathMatch: 'full', title: 'Tarefas',
+    path: '', pathMatch: 'full', title: 'Tarefas', data: { visao: 'lista' },
     loadComponent: () => import('./pages/tarefas/tarefas').then((m) => m.Tarefas),
   },
   {
@@ -20,7 +20,11 @@ export const routes: Routes = [
   },
   {
     path: 'tarefas',
-    title: 'Tarefas',
+    title: 'Tarefas', data: { visao: 'lista' },
+    loadComponent: () => import('./pages/tarefas/tarefas').then((m) => m.Tarefas),
+  },
+  {
+    path: 'quadro', title: 'Quadro de tarefas', data: { visao: 'quadro' },
     loadComponent: () => import('./pages/tarefas/tarefas').then((m) => m.Tarefas),
   },
   {

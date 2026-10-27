@@ -1,12 +1,13 @@
 <section class="pagina-tarefas" aria-labelledby="titulo-tarefas">
   <app-board-header
     [projetoAtual]="projetoAtual()"
+    [visao]="visao()"
     [projetos]="projetos()"
     [projetoId]="projetoId()"
     [total]="tarefasProjeto().length"
     [concluidas]="concluidas()"
     [progresso]="progresso()"
-    (selecionarProjeto)="projetoId.set($event)"
+    (selecionarProjeto)="atualizarFiltro('projetoId', $event)"
   />
   <div class="toolbar">
     <div class="toolbar-main">
@@ -25,7 +26,7 @@
           placeholder="Buscar por título..."
           aria-label="Buscar tarefas por título"
           [value]="busca()"
-          (input)="busca.set($any($event.target).value)" /></label
+          (input)="atualizarFiltro('q', $any($event.target).value)" /></label
       ><button
         class="filter-button"
         type="button"
@@ -39,7 +40,7 @@
         ><app-icon name="arrow" /><select
           aria-label="Ordenar tarefas"
           [value]="ordenacao()"
-          (change)="ordenacao.set($any($event.target).value)"
+          (change)="atualizarFiltro('ordem', $any($event.target).value)"
         >
           <option value="manual">Sort: manual</option>
           <option value="prazo">Prazo</option>
@@ -54,7 +55,7 @@
         >Status<select
           aria-label="Filtrar por status"
           [value]="status()"
-          (change)="status.set($any($event.target).value)"
+          (change)="atualizarFiltro('status', $any($event.target).value)"
         >
           <option value="">Todos</option>
           <option value="a-fazer">A fazer</option>
@@ -66,7 +67,7 @@
         >Prioridade<select
           aria-label="Filtrar por prioridade"
           [value]="prioridade()"
-          (change)="prioridade.set($any($event.target).value)"
+          (change)="atualizarFiltro('prioridade', $any($event.target).value)"
         >
           <option value="">Todas</option>
           <option value="alta">Alta</option>
@@ -75,7 +76,7 @@
         </select></label
       ><button
         type="button"
-        (click)="status.set(''); prioridade.set(''); busca.set('')"
+        (click)="limparFiltros()"
       >Limpar filtros</button
       ><span>{{ visiveis().length }} resultados</span>
     </div>
@@ -100,7 +101,25 @@
         Nenhuma tarefa encontrada para os filtros selecionados.
       </p>
     }
-    <div class="kanban" cdkDropListGroup aria-label="Quadro de tarefas">
+    @if (visao() === 'lista') {
+      <div class="task-list" aria-label="Lista de tarefas">
+        @for (tarefa of visiveis(); track tarefa.id) {
+          <div class="task-wrap">
+            <app-tarefa-card [tarefa]="tarefa" />
+            <label class="move-control"><span>Mover para</span>
+              <select [attr.aria-label]="'Mover tarefa ' + tarefa.titulo"
+                [value]="tarefa.status" [disabled]="salvando()"
+                (change)="mover(tarefa, $any($event.target).value)">
+                @for (destino of colunas; track destino.id) {
+                  <option [value]="destino.id">{{ destino.titulo }}</option>
+                }
+              </select>
+            </label>
+          </div>
+        }
+      </div>
+    } @else {
+    <div class="kanban" aria-label="Quadro de tarefas">
       @for (coluna of quadro(); track coluna.id) {
         <section class="kanban-column" [attr.aria-labelledby]="'col-' + coluna.id">
           <header class="column-header">
@@ -119,10 +138,10 @@
                 <app-icon name="more" />
               </summary>
               <div>
-                <button type="button" (click)="ordenacao.set('prazo')">Ordenar por prazo</button
-                ><button type="button" (click)="ordenacao.set('prioridade')">
+                <button type="button" (click)="atualizarFiltro('ordem', 'prazo')">Ordenar por prazo</button
+                ><button type="button" (click)="atualizarFiltro('ordem', 'prioridade')">
                   Ordenar por prioridade</button
-                ><button type="button" (click)="ordenacao.set('manual')">Ordem manual</button>
+                ><button type="button" (click)="atualizarFiltro('ordem', 'manual')">Ordem manual</button>
               </div>
             </details>
           </header>
@@ -148,7 +167,7 @@
             } @empty {
               <div class="empty-column">
                 <app-icon name="plus" /><span>Espaço para novas ideias</span
-                ><small>Arraste uma tarefa para cá</small>
+                ><small>Use “Adicionar tarefa” para começar</small>
               </div>
             }
           </div>
@@ -161,9 +180,10 @@
         </section>
       }
     </div>
+    }
     <footer class="board-footer">
       <span><span class="live-dot"></span> Seu próximo passo começa aqui.</span
-      ><span>Arraste pelo ⠿ ou use “Mover para” · Ordem manual válida nesta sessão</span>
+      ><span>Use “Mover para” para atualizar o status</span>
     </footer>
   }
 </section>

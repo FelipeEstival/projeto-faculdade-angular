@@ -52,7 +52,12 @@
   </div>
 </section>
 <div class="board-tabs">
-  <span class="board-tab"><app-icon name="grid" /> Quadro Kanban</span>
+  <nav class="view-switch" aria-label="Visualização das tarefas">
+    <a class="board-tab" routerLink="/tarefas" queryParamsHandling="preserve"
+      [class.view-active]="visao() === 'lista'" [attr.aria-current]="visao() === 'lista' ? 'page' : null">Lista</a>
+    <a class="board-tab" routerLink="/quadro" queryParamsHandling="preserve"
+      [class.view-active]="visao() === 'quadro'" [attr.aria-current]="visao() === 'quadro' ? 'page' : null"><app-icon name="grid" /> Quadro Kanban</a>
+  </nav>
   <div class="progress-meta">
     <span>{{ concluidas() }}/{{ total() }} concluídas</span
     ><span

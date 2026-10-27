@@ -12,6 +12,7 @@ import type { Projeto } from '../../../tipos';
 })
 export class BoardHeader {
   readonly projetoAtual = input<Projeto>();
+  readonly visao = input<'lista' | 'quadro'>('quadro');
   readonly projetos = input<Projeto[]>([]);
   readonly projetoId = input('');
   readonly total = input(0);

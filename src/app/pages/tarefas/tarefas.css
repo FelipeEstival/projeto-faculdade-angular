@@ -185,18 +185,6 @@
   border-radius: 18px;
   background: var(--cor-elevada);
 }
-.drag-handle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 20px;
-  cursor: grab;
-  touch-action: none;
-  color: #a5a7bf;
-}
-.drag-handle:active {
-  cursor: grabbing;
-}
 .move-control {
   display: flex;
   justify-content: space-between;
@@ -278,3 +266,5 @@
     min-width: 0;
   }
 }
+
+.task-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; max-width: 960px; }
