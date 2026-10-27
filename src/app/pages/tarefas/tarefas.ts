@@ -14,6 +14,7 @@ import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
 import { BoardHeader } from '../../components/board-header/board-header';
 import { Icon } from '../../components/icon';
 import { TarefasService } from '../../services/tarefas.service';
+import { FiltrosTarefasService } from '../../services/filtros-tarefas.service';
 
 @Component({
   selector: 'app-tarefas',
@@ -29,8 +30,10 @@ import { TarefasService } from '../../services/tarefas.service';
 })
 export class Tarefas {
   private readonly api = inject(TarefasService);
+  private readonly filtros = inject(FiltrosTarefasService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+
   protected readonly visao = signal<'lista' | 'quadro'>('quadro');
 
   protected readonly tarefas = signal<Tarefa[]>([]);
@@ -39,11 +42,13 @@ export class Tarefas {
   protected readonly erro = signal('');
   protected readonly aviso = signal('');
   protected readonly salvando = signal(false);
-  protected readonly busca = signal('');
-  protected readonly projetoId = signal('');
-  protected readonly prioridade = signal('');
-  protected readonly status = signal('');
-  protected readonly ordenacao = signal('manual');
+
+  protected readonly busca = this.filtros.busca;
+  protected readonly projetoId = this.filtros.projetoId;
+  protected readonly prioridade = this.filtros.prioridade;
+  protected readonly status = this.filtros.status;
+  protected readonly ordenacao = this.filtros.ordenacao;
+
   protected readonly filtrosAbertos = signal(false);
 
   protected readonly colunas: { id: Status; titulo: string; cor: string }[] = [
@@ -80,8 +85,7 @@ export class Tarefas {
       (t) =>
         (!this.prioridade() || t.prioridade === this.prioridade()) &&
         (!this.status() || t.status === this.status()) &&
-        (!termo ||
-          t.titulo.toLocaleLowerCase('pt-BR').includes(termo)),
+        (!termo || t.titulo.toLocaleLowerCase('pt-BR').includes(termo)),
     );
 
     if (this.ordenacao() === 'prazo') {
@@ -107,16 +111,27 @@ export class Tarefas {
     this.route.data.pipe(takeUntilDestroyed()).subscribe((data) => {
       this.visao.set(data['visao'] === 'lista' ? 'lista' : 'quadro');
     });
+
     this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
       this.busca.set(params.get('q') ?? '');
       this.projetoId.set(params.get('projetoId') ?? '');
+
       const prioridade = params.get('prioridade') ?? '';
-      this.prioridade.set(['alta', 'media', 'baixa'].includes(prioridade) ? prioridade : '');
+      this.prioridade.set(
+        ['alta', 'media', 'baixa'].includes(prioridade) ? prioridade : '',
+      );
+
       const status = params.get('status') ?? '';
-      this.status.set(this.colunas.some((c) => c.id === status) ? status : '');
+      this.status.set(
+        this.colunas.some((c) => c.id === status) ? status : '',
+      );
+
       const ordem = params.get('ordem') ?? 'manual';
-      this.ordenacao.set(['manual', 'prazo', 'prioridade'].includes(ordem) ? ordem : 'manual');
+      this.ordenacao.set(
+        ['manual', 'prazo', 'prioridade'].includes(ordem) ? ordem : 'manual',
+      );
     });
+
     afterNextRender(() => {
       this.carregarTarefas();
 
@@ -131,20 +146,32 @@ export class Tarefas {
   }
 
   protected atualizarFiltro(campo: string, valor: string): void {
-    const sinais = { q: this.busca, projetoId: this.projetoId,
-      prioridade: this.prioridade, status: this.status, ordem: this.ordenacao };
+    const sinais = {
+      q: this.busca,
+      projetoId: this.projetoId,
+      prioridade: this.prioridade,
+      status: this.status,
+      ordem: this.ordenacao,
+    };
+
     sinais[campo as keyof typeof sinais]?.set(valor);
+
     void this.router.navigate([], {
-      relativeTo: this.route, queryParams: { [campo]: valor || null },
-      queryParamsHandling: 'merge', replaceUrl: true,
+      relativeTo: this.route,
+      queryParams: { [campo]: valor || null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
   }
 
   protected limparFiltros(): void {
-    this.busca.set(''); this.status.set(''); this.prioridade.set('');
+    this.filtros.limpar();
+
     void this.router.navigate([], {
-      relativeTo: this.route, queryParams: { q: null, status: null, prioridade: null },
-      queryParamsHandling: 'merge', replaceUrl: true,
+      relativeTo: this.route,
+      queryParams: { q: null, status: null, prioridade: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
   }
 
