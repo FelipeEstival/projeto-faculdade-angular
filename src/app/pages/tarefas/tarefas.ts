@@ -47,6 +47,7 @@ export class Tarefas {
   protected readonly busca = signal('');
   protected readonly projetoId = signal('');
   protected readonly prioridade = signal('');
+  protected readonly status = signal('');
   protected readonly ordenacao = signal('manual');
   protected readonly filtrosAbertos = signal(false);
   protected readonly colunas: { id: Status; titulo: string; cor: string }[] = [
@@ -74,6 +75,7 @@ export class Tarefas {
     const lista = this.tarefasProjeto().filter(
       (t) =>
         (!this.prioridade() || t.prioridade === this.prioridade()) &&
+        (!this.status() || t.status === this.status()) &&
         (!termo || t.titulo.toLocaleLowerCase('pt-BR').includes(termo)),
     );
     if (this.ordenacao() === 'prazo') lista.sort((a, b) => a.prazo.localeCompare(b.prazo));

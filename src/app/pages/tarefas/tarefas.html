@@ -29,7 +29,7 @@
       ><button
         class="filter-button"
         type="button"
-        [class.active]="prioridade()"
+        [class.active]="prioridade() || status()"
         [attr.aria-expanded]="filtrosAbertos()"
         aria-controls="board-filters"
         (click)="filtrosAbertos.set(!filtrosAbertos())"
@@ -51,6 +51,18 @@
   @if (filtrosAbertos()) {
     <div class="filter-panel" id="board-filters">
       <label
+        >Status<select
+          aria-label="Filtrar por status"
+          [value]="status()"
+          (change)="status.set($any($event.target).value)"
+        >
+          <option value="">Todos</option>
+          <option value="a-fazer">A fazer</option>
+          <option value="em-andamento">Em andamento</option>
+          <option value="em-revisao">Em revisão</option>
+          <option value="concluida">Concluída</option>
+        </select></label
+      ><label
         >Prioridade<select
           aria-label="Filtrar por prioridade"
           [value]="prioridade()"
@@ -61,7 +73,10 @@
           <option value="media">Média</option>
           <option value="baixa">Baixa</option>
         </select></label
-      ><button type="button" (click)="prioridade.set(''); busca.set('')">Limpar filtros</button
+      ><button
+        type="button"
+        (click)="status.set(''); prioridade.set(''); busca.set('')"
+      >Limpar filtros</button
       ><span>{{ visiveis().length }} resultados</span>
     </div>
   }
