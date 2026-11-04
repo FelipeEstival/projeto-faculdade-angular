@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } f
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { EMPTY, catchError, finalize, of, switchMap, tap } from 'rxjs';
 import type { NovaTarefa, Tarefa, Status } from '../../../tipos';
 import { TarefaForm } from '../../components/tarefa-form/tarefa-form';
 import { TarefasService } from '../../services/tarefas.service';
@@ -78,6 +78,7 @@ export class FormularioTarefa {
                 );
                 return of(null);
               }),
+              finalize(() => this.carregando.set(false)),
             )
           : of(null);
       }),
@@ -97,17 +98,18 @@ export class FormularioTarefa {
     this.erroSalvar.set('');
     const id = this.id();
     const requisicao = id ? this.api.atualizarTarefa(id, dados) : this.api.criarTarefa(dados);
-    requisicao.subscribe({
-      next: () => {
-        void this.router.navigate(['/tarefas']);
-      },
-      error: () => {
-        this.erroSalvar.set(
-          'Não foi possível salvar a tarefa. Seus dados foram mantidos. Tente novamente.',
-        );
-        this.enviando.set(false);
-      },
-    });
+    requisicao
+      .pipe(
+        tap(() => void this.router.navigate(['/tarefas'])),
+        catchError(() => {
+          this.erroSalvar.set(
+            'Não foi possível salvar a tarefa. Seus dados foram mantidos. Tente novamente.',
+          );
+          return EMPTY;
+        }),
+        finalize(() => this.enviando.set(false)),
+      )
+      .subscribe();
   }
 
   protected cancelar(): void {
