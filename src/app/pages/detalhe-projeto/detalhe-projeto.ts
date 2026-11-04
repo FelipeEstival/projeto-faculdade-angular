@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { EMPTY, catchError, finalize, map, of, switchMap, tap } from 'rxjs';
 import type { ProjetoComTarefas } from '../../services/projeto-com-tarefas';
 import { TarefasService } from '../../services/tarefas.service';
 import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
@@ -21,6 +21,12 @@ import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
       } @else if (projeto(); as atual) {
         <p>{{ atual.descricao }}</p>
         <p><a [routerLink]="['/projetos', atual.id, 'editar']">Editar projeto</a></p>
+        <button type="button" [disabled]="excluindo()" (click)="excluir(atual.id)">
+          {{ excluindo() ? 'Excluindo…' : 'Excluir projeto' }}
+        </button>
+        @if (erroExcluir()) {
+          <p role="alert">{{ erroExcluir() }}</p>
+        }
         <dl>
           <dt>ID</dt>
           <dd>{{ atual.id }}</dd>
@@ -50,10 +56,13 @@ import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
 })
 export class DetalheProjeto {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly api = inject(TarefasService);
   protected readonly projeto = signal<ProjetoComTarefas | null>(null);
   protected readonly carregando = signal(true);
   protected readonly erro = signal('');
+  protected readonly excluindo = signal(false);
+  protected readonly erroExcluir = signal('');
 
   constructor() {
     // A inscrição acompanha mudanças do id e cancela requisições anteriores.
@@ -71,11 +80,12 @@ export class DetalheProjeto {
               catchError((erro: HttpErrorResponse) => {
                 this.erro.set(
                   erro.status === 404
-                    ? 'Projeto não encontrado.'
+                    ? 'Registro não encontrado: o projeto solicitado não existe.'
                     : 'Não foi possível carregar o projeto. Verifique se a API está funcionando.',
                 );
                 return of(null);
               }),
+              finalize(() => this.carregando.set(false)),
             ),
       ),
       takeUntilDestroyed(),
@@ -84,8 +94,26 @@ export class DetalheProjeto {
       dados.subscribe((projeto) => {
         this.projeto.set(projeto);
         if (!projeto && !this.erro()) this.erro.set('Projeto não encontrado.');
-        this.carregando.set(false);
+        if (!projeto) this.carregando.set(false);
       }),
     );
+  }
+
+  protected excluir(id: string): void {
+    if (this.excluindo()) return;
+
+    this.excluindo.set(true);
+    this.erroExcluir.set('');
+    this.api
+      .excluirProjeto(id)
+      .pipe(
+        tap(() => void this.router.navigate(['/projetos'])),
+        catchError(() => {
+          this.erroExcluir.set('Não foi possível excluir o projeto. Tente novamente.');
+          return EMPTY;
+        }),
+        finalize(() => this.excluindo.set(false)),
+      )
+      .subscribe();
   }
 }

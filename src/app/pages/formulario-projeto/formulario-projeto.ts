@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { EMPTY, catchError, finalize, tap } from 'rxjs';
 import type { DadosProjeto, NovoProjeto, Projeto } from '../../../tipos';
 import { ProjetoForm } from '../../components/projeto-form/projeto-form';
 import { TarefasService } from '../../services/tarefas.service';
@@ -76,19 +77,20 @@ export class FormularioProjeto {
         ? this.api.criarProjeto({ ...dados, criadoEm: this.dataLocal() } satisfies NovoProjeto)
         : this.api.atualizarProjeto(this.projetoId, dados);
 
-    requisicao.subscribe({
-      next: (projeto) => {
-        void this.router.navigate(['/projetos', projeto.id]);
-      },
-      error: (erro: HttpErrorResponse) => {
-        this.erroSalvamento.set(
-          erro.status === 404
-            ? 'Projeto não encontrado. Volte à lista e tente novamente.'
-            : 'Não foi possível salvar o projeto. Verifique se a API está funcionando.',
-        );
-        this.salvando.set(false);
-      },
-    });
+    requisicao
+      .pipe(
+        tap((projeto) => void this.router.navigate(['/projetos', projeto.id])),
+        catchError((erro: HttpErrorResponse) => {
+          this.erroSalvamento.set(
+            erro.status === 404
+              ? 'Projeto não encontrado. Volte à lista e tente novamente.'
+              : 'Não foi possível salvar o projeto. Os dados preenchidos foram mantidos. Tente novamente.',
+          );
+          return EMPTY;
+        }),
+        finalize(() => this.salvando.set(false)),
+      )
+      .subscribe();
   }
 
   protected cancelar(): void {
@@ -101,20 +103,21 @@ export class FormularioProjeto {
   }
 
   private carregarProjeto(id: string): void {
-    this.api.getProjetoPorId(id).subscribe({
-      next: (projeto) => {
-        this.projeto.set(projeto);
-        this.carregando.set(false);
-      },
-      error: (erro: HttpErrorResponse) => {
-        this.erroCarregamento.set(
-          erro.status === 404
-            ? 'Projeto não encontrado.'
-            : 'Não foi possível carregar o projeto. Verifique se a API está funcionando.',
-        );
-        this.carregando.set(false);
-      },
-    });
+    this.api
+      .getProjetoPorId(id)
+      .pipe(
+        tap((projeto) => this.projeto.set(projeto)),
+        catchError((erro: HttpErrorResponse) => {
+          this.erroCarregamento.set(
+            erro.status === 404
+              ? 'Registro não encontrado: o projeto solicitado não existe.'
+              : 'Não foi possível carregar o projeto. Verifique se a API está funcionando.',
+          );
+          return EMPTY;
+        }),
+        finalize(() => this.carregando.set(false)),
+      )
+      .subscribe();
   }
 
   private dataLocal(): string {

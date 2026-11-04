@@ -54,6 +54,10 @@ export class TarefasService {
     );
   }
 
+  excluirTarefa(id: string): Observable<void> {
+    return this.http.delete<void>(`${TAREFAS_API_URL}/${id}`);
+  }
+
   criarProjeto(dados: NovoProjeto): Observable<Projeto> {
     return this.http.post<Projeto>(PROJETOS_API_URL, dados);
   }
@@ -66,5 +70,9 @@ export class TarefasService {
       `${PROJETOS_API_URL}/${id}`,
       dados
     );
+  }
+
+  excluirProjeto(id: string): Observable<void> {
+    return this.http.delete<void>(`${PROJETOS_API_URL}/${id}`);
   }
 }
