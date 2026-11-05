@@ -90,7 +90,7 @@ describe('Quadro Kanban', () => {
     ).toBeNull();
 
     expect(fixture.nativeElement.textContent).toContain(
-      'Nenhuma tarefa para exibir.',
+      'Nenhuma tarefa cadastrada.',
     );
 
     expect(

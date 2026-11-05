@@ -38,3 +38,10 @@
     padding: 18px 14px;
   }
 }
+
+@media (max-width: 560px) {
+  .conteudo {
+    margin-left: 0;
+    padding: 20px 14px 32px;
+  }
+}

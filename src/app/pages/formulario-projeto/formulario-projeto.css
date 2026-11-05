@@ -4,7 +4,7 @@
 }
 .voltar {
   width: fit-content;
-  color: var(--cor-primaria);
+  color: #a8bfff;
 }
 header {
   display: grid;

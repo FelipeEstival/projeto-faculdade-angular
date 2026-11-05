@@ -1,6 +1,8 @@
 <section class="pagina-tarefas" aria-labelledby="titulo-tarefas">
   <app-board-header
     [projetoAtual]="projetoAtual()"
+    [carregandoProjetos]="carregandoProjetos()"
+    [erroProjetos]="!!erroProjetos()"
     [visao]="visao()"
     [projetos]="projetos()"
     [projetoId]="projetoId()"
@@ -16,7 +18,7 @@
         class="button button--primary"
         routerLink="/tarefas/nova"
         [queryParams]="{ projetoId: projetoId() || null }"
-        ><app-icon name="plus" /> Add New</a
+        ><app-icon name="plus" /> Nova tarefa</a
       >
     </div>
     <div class="toolbar-actions">
@@ -32,17 +34,17 @@
         type="button"
         [class.active]="prioridade() || status()"
         [attr.aria-expanded]="filtrosAbertos()"
-        aria-controls="board-filters"
+        [attr.aria-controls]="filtrosAbertos() ? 'board-filters' : null"
         (click)="filtrosAbertos.set(!filtrosAbertos())"
       >
-        <app-icon name="filter" /> Filters</button
+        <app-icon name="filter" /> Filtros</button
       ><label class="sort"
         ><app-icon name="arrow" /><select
           aria-label="Ordenar tarefas"
           [value]="ordenacao()"
           (change)="atualizarFiltro('ordem', $any($event.target).value)"
         >
-          <option value="manual">Sort: manual</option>
+          <option value="manual">Ordem manual</option>
           <option value="prazo">Prazo</option>
           <option value="prioridade">Prioridade</option>
         </select></label
@@ -74,44 +76,58 @@
           <option value="media">Média</option>
           <option value="baixa">Baixa</option>
         </select></label
-      ><button
-        type="button"
-        (click)="limparFiltros()"
-      >Limpar filtros</button
+      ><button type="button" (click)="limparFiltros()">Limpar filtros</button
       ><span>{{ visiveis().length }} resultados</span>
     </div>
   }
   @if (erro()) {
     <div class="estado error" role="alert">
       {{ erro() }}
-      @if (!tarefas().length) {
-        <button type="button" (click)="carregarTarefas()">Tentar novamente</button>
-      }
+      <button type="button" [disabled]="salvando()" (click)="tentarNovamente()">
+        Tentar novamente
+      </button>
+    </div>
+  }
+  @if (carregandoProjetos()) {
+    <p role="status">Carregando projetos…</p>
+  } @else if (erroProjetos()) {
+    <div class="estado" role="alert">
+      {{ erroProjetos() }}
+      <button type="button" (click)="carregarProjetos()">Tentar carregar projetos novamente</button>
     </div>
   }
   <p role="status">{{ salvando() ? 'Salvando movimentação...' : aviso() }}</p>
   @if (carregando()) {
     <p class="estado" role="status">Carregando tarefas…</p>
-  } @else {
-    @if (!tarefas().length && !erro()) {
-      <p class="empty-notice">Nenhuma tarefa para exibir. Comece adicionando sua primeira ideia.</p>
-    }
-    @if (tarefas().length && !visiveis().length) {
-      <p class="empty-notice" role="status">
-        Nenhuma tarefa encontrada para os filtros selecionados.
-      </p>
+  } @else if (!erro() || tarefas().length) {
+    @if (!visiveis().length && !erro()) {
+      <div class="estado empty-notice">
+        <p role="status">{{ mensagemVazia() }}</p>
+        @if (!tarefasProjeto().length) {
+          <a routerLink="/tarefas/nova" [queryParams]="{ projetoId: projetoId() || null }"
+            >Criar tarefa</a
+          >
+        } @else {
+          <button type="button" (click)="limparFiltros()">Limpar busca e filtros</button>
+        }
+      </div>
     }
     @if (visao() === 'lista') {
       <div class="task-list" aria-label="Lista de tarefas">
         @for (tarefa of visiveis(); track tarefa.id) {
           <div class="task-wrap">
             <app-tarefa-card [tarefa]="tarefa" />
-            <label class="move-control"><span>Mover para</span>
-              <select [attr.aria-label]="'Mover tarefa ' + tarefa.titulo"
-                [value]="tarefa.status" [disabled]="salvando()"
-                (change)="mover(tarefa, $any($event.target).value)">
+            <label class="move-control"
+              ><span>Mover para</span>
+              <select
+                [attr.aria-label]="'Mover tarefa ' + tarefa.titulo"
+                [disabled]="salvando()"
+                (change)="mover(tarefa, $any($event.target).value)"
+              >
                 @for (destino of colunas; track destino.id) {
-                  <option [value]="destino.id">{{ destino.titulo }}</option>
+                  <option [value]="destino.id" [selected]="destino.id === tarefa.status">
+                    {{ destino.titulo }}
+                  </option>
                 }
               </select>
             </label>
@@ -119,67 +135,69 @@
         }
       </div>
     } @else {
-    <div class="kanban" aria-label="Quadro de tarefas">
-      @for (coluna of quadro(); track coluna.id) {
-        <section class="kanban-column" [attr.aria-labelledby]="'col-' + coluna.id">
-          <header class="column-header">
-            <span class="column-dot" [style.background]="coluna.cor"></span>
-            <h2 [id]="'col-' + coluna.id">{{ coluna.titulo }}</h2>
-            <span class="column-count">{{ coluna.tarefas.length }}</span
-            ><a
-              class="column-add"
+      <div class="kanban" aria-label="Quadro de tarefas">
+        @for (coluna of quadro(); track coluna.id) {
+          <section class="kanban-column" [attr.aria-labelledby]="'col-' + coluna.id">
+            <header class="column-header">
+              <span class="column-dot" [style.background]="coluna.cor"></span>
+              <h2 [id]="'col-' + coluna.id">{{ coluna.titulo }}</h2>
+              <span class="column-count">{{ coluna.tarefas.length }}</span
+              ><a
+                class="column-add"
+                routerLink="/tarefas/nova"
+                [queryParams]="{ projetoId: projetoId() || null, status: coluna.id }"
+                [attr.aria-label]="'Adicionar tarefa em ' + coluna.titulo"
+                ><app-icon name="plus"
+              /></a>
+              <details class="column-menu">
+                <summary [attr.aria-label]="'Opções de ' + coluna.titulo">
+                  <app-icon name="more" />
+                </summary>
+                <div>
+                  <button type="button" (click)="atualizarFiltro('ordem', 'prazo')">
+                    Ordenar por prazo</button
+                  ><button type="button" (click)="atualizarFiltro('ordem', 'prioridade')">
+                    Ordenar por prioridade</button
+                  ><button type="button" (click)="atualizarFiltro('ordem', 'manual')">
+                    Ordem manual
+                  </button>
+                </div>
+              </details>
+            </header>
+            <div class="column-list">
+              @for (tarefa of coluna.tarefas; track tarefa.id) {
+                <div class="task-wrap">
+                  <app-tarefa-card [tarefa]="tarefa" /><label class="move-control"
+                    ><span>Mover para</span
+                    ><select
+                      [attr.aria-label]="'Mover tarefa ' + tarefa.titulo"
+                      [disabled]="salvando()"
+                      (change)="mover(tarefa, $any($event.target).value)"
+                    >
+                      @for (destino of colunas; track destino.id) {
+                        <option [value]="destino.id" [selected]="destino.id === tarefa.status">
+                          {{ destino.titulo }}
+                        </option>
+                      }
+                    </select></label
+                  >
+                </div>
+              } @empty {
+                <div class="empty-column">
+                  <app-icon name="plus" /><span>Nenhuma tarefa nesta coluna</span
+                  ><small>Use “Adicionar tarefa” para começar</small>
+                </div>
+              }
+            </div>
+            <a
+              class="add-task"
               routerLink="/tarefas/nova"
               [queryParams]="{ projetoId: projetoId() || null, status: coluna.id }"
-              [attr.aria-label]="'Adicionar tarefa em ' + coluna.titulo"
-              ><app-icon name="plus"
-            /></a>
-            <details class="column-menu">
-              <summary [attr.aria-label]="'Opções de ' + coluna.titulo">
-                <app-icon name="more" />
-              </summary>
-              <div>
-                <button type="button" (click)="atualizarFiltro('ordem', 'prazo')">Ordenar por prazo</button
-                ><button type="button" (click)="atualizarFiltro('ordem', 'prioridade')">
-                  Ordenar por prioridade</button
-                ><button type="button" (click)="atualizarFiltro('ordem', 'manual')">Ordem manual</button>
-              </div>
-            </details>
-          </header>
-          <div
-            class="column-list"
-          >
-            @for (tarefa of coluna.tarefas; track tarefa.id) {
-              <div class="task-wrap">
-                <app-tarefa-card [tarefa]="tarefa" /><label class="move-control"
-                  ><span>Mover para</span
-                  ><select
-                    [attr.aria-label]="'Mover tarefa ' + tarefa.titulo"
-                    [value]="tarefa.status"
-                    [disabled]="salvando()"
-                    (change)="mover(tarefa, $any($event.target).value)"
-                  >
-                    @for (destino of colunas; track destino.id) {
-                      <option [value]="destino.id">{{ destino.titulo }}</option>
-                    }
-                  </select></label
-                >
-              </div>
-            } @empty {
-              <div class="empty-column">
-                <app-icon name="plus" /><span>Espaço para novas ideias</span
-                ><small>Use “Adicionar tarefa” para começar</small>
-              </div>
-            }
-          </div>
-          <a
-            class="add-task"
-            routerLink="/tarefas/nova"
-            [queryParams]="{ projetoId: projetoId() || null, status: coluna.id }"
-            ><app-icon name="plus" /> Adicionar tarefa</a
-          >
-        </section>
-      }
-    </div>
+              ><app-icon name="plus" /> Adicionar tarefa</a
+            >
+          </section>
+        }
+      </div>
     }
     <footer class="board-footer">
       <span><span class="live-dot"></span> Seu próximo passo começa aqui.</span
