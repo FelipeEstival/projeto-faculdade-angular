@@ -1,5 +1,12 @@
-<form #formulario="ngForm" class="tarefa-form" (ngSubmit)="enviar(formulario)" novalidate>
+<form
+  #formulario="ngForm"
+  class="tarefa-form"
+  [attr.aria-busy]="carregandoProjetos || enviando"
+  (ngSubmit)="enviar(formulario)"
+  novalidate
+>
   <fieldset [disabled]="enviando" class="campos-formulario">
+    <legend class="sr-only">Dados da tarefa</legend>
     <div class="campo">
       <label for="titulo-tarefa">Título</label>
       <input
@@ -73,6 +80,14 @@
         <small role="status">Carregando projetos...</small>
       } @else if (erroProjetos) {
         <small class="erro" role="alert">{{ erroProjetos }}</small>
+        <button type="button" (click)="carregarProjetos()">
+          Tentar carregar projetos novamente
+        </button>
+      } @else if (!projetos.length) {
+        <p role="status">
+          Nenhum projeto cadastrado. Cadastre um projeto antes de criar tarefas.
+          <a routerLink="/projetos/novo">Cadastrar projeto</a>
+        </p>
       } @else if (projetoId.invalid && projetoId.touched) {
         <small id="erro-projeto-tarefa" class="erro" role="alert">
           Erro: selecione um projeto.
@@ -150,7 +165,7 @@
 
     <button
       type="submit"
-      [disabled]="formulario.invalid || carregandoProjetos || !!erroProjetos || enviando"
+      [disabled]="carregandoProjetos || !!erroProjetos || !projetos.length || enviando"
     >
       {{ enviando ? 'Salvando...' : tarefa ? 'Salvar alterações' : 'Criar tarefa' }}
     </button>

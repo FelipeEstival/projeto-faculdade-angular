@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
@@ -11,12 +12,13 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import type { NovaTarefa, Prioridade, Projeto, Status, Tarefa } from '../../../tipos';
 import { TarefasService } from '../../services/tarefas.service';
 
 @Component({
   selector: 'app-tarefa-form',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './tarefa-form.html',
   styleUrl: './tarefa-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,6 +51,8 @@ export class TarefaForm implements OnInit, OnChanges {
     { valor: 'alta', texto: 'Alta' },
   ];
 
+  private readonly elemento = inject<ElementRef<HTMLElement>>(ElementRef);
+
   protected dados: NovaTarefa = this.novaTarefaVazia();
 
   ngOnInit(): void {
@@ -78,13 +82,21 @@ export class TarefaForm implements OnInit, OnChanges {
 
     if (formulario.invalid || !this.dados.projetoId) {
       formulario.control.markAllAsTouched();
+      const primeiroInvalido = Object.entries(formulario.controls).find(
+        ([, controle]) =>
+          controle.invalid || (typeof controle.value === 'string' && !controle.value.trim()),
+      )?.[0];
+      if (primeiroInvalido)
+        this.elemento.nativeElement
+          .querySelector<HTMLElement>(`[name="${primeiroInvalido}"]`)
+          ?.focus();
       return;
     }
 
     this.salvar.emit({ ...this.dados });
   }
 
-  private carregarProjetos(): void {
+  protected carregarProjetos(): void {
     this.carregandoProjetos = true;
     this.erroProjetos = '';
 

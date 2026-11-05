@@ -16,9 +16,9 @@
         class="glass-pill"
         (click)="escolherProjeto.set(!escolherProjeto())"
         [attr.aria-expanded]="escolherProjeto()"
-        aria-controls="project-picker"
+        [attr.aria-controls]="escolherProjeto() ? 'project-picker' : null"
       >
-        Change <span aria-hidden="true">⌄</span>
+        Trocar projeto <span aria-hidden="true">⌄</span>
       </button>
     </div>
     <p class="banner-description">
@@ -39,12 +39,12 @@
       <label class="project-picker" id="project-picker"
         >Projeto<select
           aria-label="Selecionar projeto"
-          [value]="projetoId()"
+          [disabled]="carregandoProjetos() || erroProjetos()"
           (change)="selecionarProjeto.emit($any($event.target).value)"
         >
-          <option value="">Todos os projetos</option>
+          <option value="" [selected]="!projetoId()">Todos os projetos</option>
           @for (p of projetos(); track p.id) {
-            <option [value]="p.id">{{ p.nome }}</option>
+            <option [value]="p.id" [selected]="p.id === projetoId()">{{ p.nome }}</option>
           }
         </select></label
       >
@@ -53,10 +53,22 @@
 </section>
 <div class="board-tabs">
   <nav class="view-switch" aria-label="Visualização das tarefas">
-    <a class="board-tab" routerLink="/tarefas" queryParamsHandling="preserve"
-      [class.view-active]="visao() === 'lista'" [attr.aria-current]="visao() === 'lista' ? 'page' : null">Lista</a>
-    <a class="board-tab" routerLink="/quadro" queryParamsHandling="preserve"
-      [class.view-active]="visao() === 'quadro'" [attr.aria-current]="visao() === 'quadro' ? 'page' : null"><app-icon name="grid" /> Quadro Kanban</a>
+    <a
+      class="board-tab"
+      routerLink="/tarefas"
+      queryParamsHandling="preserve"
+      [class.view-active]="visao() === 'lista'"
+      [attr.aria-current]="visao() === 'lista' ? 'page' : null"
+      >Lista</a
+    >
+    <a
+      class="board-tab"
+      routerLink="/quadro"
+      queryParamsHandling="preserve"
+      [class.view-active]="visao() === 'quadro'"
+      [attr.aria-current]="visao() === 'quadro' ? 'page' : null"
+      ><app-icon name="grid" /> Quadro Kanban</a
+    >
   </nav>
   <div class="progress-meta">
     <span>{{ concluidas() }}/{{ total() }} concluídas</span

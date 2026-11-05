@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import type { DadosProjeto, Projeto } from '../../../tipos';
@@ -22,6 +24,8 @@ export class ProjetoForm implements OnChanges {
   @Input() enviando = false;
   @Output() salvar = new EventEmitter<DadosProjeto>();
   @Output() cancelar = new EventEmitter<void>();
+
+  private readonly elemento = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected dados: DadosProjeto = this.dadosVazios();
 
@@ -50,6 +54,14 @@ export class ProjetoForm implements OnChanges {
 
     if (formulario.invalid || !dados.nome || !dados.descricao || !dados.disciplina) {
       formulario.control.markAllAsTouched();
+      const primeiroInvalido = Object.entries(formulario.controls).find(
+        ([, controle]) =>
+          controle.invalid || (typeof controle.value === 'string' && !controle.value.trim()),
+      )?.[0];
+      if (primeiroInvalido)
+        this.elemento.nativeElement
+          .querySelector<HTMLElement>(`[name="${primeiroInvalido}"]`)
+          ?.focus();
       return;
     }
 

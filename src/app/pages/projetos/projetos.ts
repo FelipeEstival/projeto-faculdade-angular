@@ -7,16 +7,16 @@ import { TarefasService } from '../../services/tarefas.service';
   selector: 'app-projetos',
   imports: [RouterLink],
   template: `
-    <section aria-labelledby="titulo-projetos">
+    <section aria-labelledby="titulo-projetos" [attr.aria-busy]="carregando()">
       <header class="cabecalho-projetos">
         <h1 id="titulo-projetos">Lista de projetos</h1>
         <a class="botao-novo-projeto" routerLink="/projetos/novo">Novo projeto</a>
       </header>
 
       @if (carregando()) {
-        <p role="status">Carregando projetos...</p>
+        <p class="estado" role="status">Carregando projetos...</p>
       } @else if (erro()) {
-        <p role="alert">{{ erro() }}</p>
+        <p class="estado" role="alert">{{ erro() }}</p>
         <button type="button" (click)="carregar()">Tentar novamente</button>
       } @else {
         @for (projeto of projetos(); track projeto.id) {
@@ -38,7 +38,9 @@ import { TarefasService } from '../../services/tarefas.service';
             </a>
           </article>
         } @empty {
-          <p>Nenhum projeto cadastrado.</p>
+          <p class="estado" role="status">
+            Nenhum projeto cadastrado. Use “Novo projeto” para começar.
+          </p>
         }
       }
     </section>

@@ -1,0 +1,105 @@
+{
+  "data": "2026-11-04",
+  "base": "8b766f99347beda8c28d12f1ade9e5a8ebc2ecfa",
+  "lighthouse": {
+    "versao": "13.6.0",
+    "categoria": "accessibility",
+    "viewport": {
+      "width": 375,
+      "height": 812
+    },
+    "navegador": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.0 Safari/537.36",
+    "telas": [
+      {
+        "rota": "/endereco-inexistente",
+        "pontuacao": 100,
+        "falhas": []
+      },
+      {
+        "rota": "/projetos",
+        "pontuacao": 100,
+        "falhas": []
+      },
+      {
+        "rota": "/projetos/1",
+        "pontuacao": 100,
+        "falhas": []
+      },
+      {
+        "rota": "/projetos/1/editar",
+        "pontuacao": 100,
+        "falhas": []
+      },
+      {
+        "rota": "/projetos/novo",
+        "pontuacao": 100,
+        "falhas": []
+      },
+      {
+        "rota": "/quadro",
+        "pontuacao": 100,
+        "falhas": []
+      },
+      {
+        "rota": "/tarefas",
+        "pontuacao": 100,
+        "falhas": []
+      },
+      {
+        "rota": "/tarefas/1",
+        "pontuacao": 100,
+        "falhas": []
+      },
+      {
+        "rota": "/tarefas/1/editar",
+        "pontuacao": 100,
+        "falhas": []
+      },
+      {
+        "rota": "/tarefas/nova",
+        "pontuacao": 100,
+        "falhas": []
+      }
+    ]
+  },
+  "axe": {
+    "versao": "4.14.0",
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21aa",
+      "best-practice"
+    ],
+    "larguras": [
+      375,
+      1440
+    ],
+    "telas_por_largura": 10,
+    "violacoes": 0
+  },
+  "responsividade": {
+    "larguras": [
+      320,
+      375,
+      768,
+      1440
+    ],
+    "verificacoes": 40,
+    "overflow_horizontal_na_pagina": 0
+  },
+  "fluxos_no_navegador": {
+    "teclado": true,
+    "foco": true,
+    "filtros": true,
+    "selects": true,
+    "validacao": true,
+    "apiParada": true,
+    "exclusao": true
+  },
+  "testes_unitarios": {
+    "arquivos": 10,
+    "testes": 53,
+    "falhas": 0
+  },
+  "build": "aprovado, sem avisos de orçamento"
+}

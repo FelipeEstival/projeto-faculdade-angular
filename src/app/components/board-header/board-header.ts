@@ -15,6 +15,8 @@ export class BoardHeader {
   readonly visao = input<'lista' | 'quadro'>('quadro');
   readonly projetos = input<Projeto[]>([]);
   readonly projetoId = input('');
+  readonly carregandoProjetos = input(false);
+  readonly erroProjetos = input(false);
   readonly total = input(0);
   readonly concluidas = input(0);
   readonly progresso = input(0);

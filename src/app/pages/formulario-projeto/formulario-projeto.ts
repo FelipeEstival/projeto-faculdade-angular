@@ -10,7 +10,11 @@ import { TarefasService } from '../../services/tarefas.service';
   selector: 'app-formulario-projeto-page',
   imports: [RouterLink, ProjetoForm],
   template: `
-    <section class="pagina-formulario-projeto" aria-labelledby="titulo-formulario-projeto">
+    <section
+      class="pagina-formulario-projeto"
+      aria-labelledby="titulo-formulario-projeto"
+      [attr.aria-busy]="carregando()"
+    >
       <a class="voltar" routerLink="/projetos">← Voltar para projetos</a>
       <header>
         <p class="sobretitulo">Projetos</p>
@@ -28,10 +32,14 @@ import { TarefasService } from '../../services/tarefas.service';
         <p class="estado" role="status">Carregando projeto…</p>
       } @else if (erroCarregamento()) {
         <p class="estado erro" role="alert">{{ erroCarregamento() }}</p>
+        <button type="button" (click)="carregarProjeto()">Tentar novamente</button>
         <a routerLink="/projetos">Ir para a lista de projetos</a>
       } @else {
         @if (erroSalvamento()) {
           <p class="estado erro" role="alert">{{ erroSalvamento() }}</p>
+        }
+        @if (salvando()) {
+          <p role="status">Salvando projeto…</p>
         }
         <app-projeto-form
           [projeto]="projeto()"
@@ -60,12 +68,12 @@ export class FormularioProjeto {
 
   constructor() {
     if (this.projetoId !== null) {
-      afterNextRender(() => this.carregarProjeto(this.projetoId!));
+      afterNextRender(() => this.carregarProjeto());
     }
   }
 
   protected salvar(dados: DadosProjeto): void {
-    if (this.salvando()) {
+    if (this.salvando() || this.carregando() || this.erroCarregamento()) {
       return;
     }
 
@@ -102,7 +110,11 @@ export class FormularioProjeto {
     void this.router.navigate(['/projetos']);
   }
 
-  private carregarProjeto(id: string): void {
+  protected carregarProjeto(): void {
+    const id = this.projetoId;
+    if (id === null) return;
+    this.carregando.set(true);
+    this.erroCarregamento.set('');
     this.api
       .getProjetoPorId(id)
       .pipe(
@@ -110,7 +122,7 @@ export class FormularioProjeto {
         catchError((erro: HttpErrorResponse) => {
           this.erroCarregamento.set(
             erro.status === 404
-              ? 'Registro não encontrado: o projeto solicitado não existe.'
+              ? 'Projeto não encontrado.'
               : 'Não foi possível carregar o projeto. Verifique se a API está funcionando.',
           );
           return EMPTY;

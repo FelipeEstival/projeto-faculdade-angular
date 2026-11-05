@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } f
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, catchError, finalize, map, of, switchMap, tap } from 'rxjs';
+import { EMPTY, Subject, catchError, finalize, of, startWith, switchMap, tap } from 'rxjs';
 import type { ProjetoComTarefas } from '../../services/projeto-com-tarefas';
 import { TarefasService } from '../../services/tarefas.service';
 import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
@@ -11,19 +11,29 @@ import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
   selector: 'app-detalhe-projeto',
   imports: [RouterLink, TarefaCard],
   template: `
-    <section aria-labelledby="titulo-projeto">
+    <section aria-labelledby="titulo-projeto" [attr.aria-busy]="carregando()">
       <a routerLink="/projetos">← Voltar para projetos</a>
       <h1 id="titulo-projeto">{{ projeto()?.nome ?? 'Detalhe do projeto' }}</h1>
       @if (carregando()) {
-        <p role="status">Carregando projeto…</p>
+        <p class="estado" role="status">Carregando projeto…</p>
       } @else if (erro()) {
-        <p role="alert">{{ erro() }}</p>
+        <p class="estado" role="alert">{{ erro() }}</p>
+        <button type="button" (click)="recarregar.next()">Tentar novamente</button>
       } @else if (projeto(); as atual) {
         <p>{{ atual.descricao }}</p>
         <p><a [routerLink]="['/projetos', atual.id, 'editar']">Editar projeto</a></p>
         <button type="button" [disabled]="excluindo()" (click)="excluir(atual.id)">
-          {{ excluindo() ? 'Excluindo…' : 'Excluir projeto' }}
+          {{
+            excluindo()
+              ? 'Excluindo…'
+              : erroExcluir()
+                ? 'Tentar excluir novamente'
+                : 'Excluir projeto'
+          }}
         </button>
+        @if (excluindo()) {
+          <p role="status">Excluindo projeto…</p>
+        }
         @if (erroExcluir()) {
           <p role="alert">{{ erroExcluir() }}</p>
         }
@@ -45,7 +55,9 @@ import { TarefaCard } from '../../components/tarefa-card/tarefa-card';
           @for (tarefa of atual.tarefas; track tarefa.id) {
             <app-tarefa-card [tarefa]="tarefa" />
           } @empty {
-            <p>Este projeto ainda não possui tarefas.</p>
+            <p class="estado" role="status">
+              Este projeto ainda não possui tarefas. Adicione a primeira tarefa pelo link acima.
+            </p>
           }
         </div>
       }
@@ -64,34 +76,40 @@ export class DetalheProjeto {
   protected readonly excluindo = signal(false);
   protected readonly erroExcluir = signal('');
 
+  protected readonly recarregar = new Subject<void>();
+
   constructor() {
     // A inscrição acompanha mudanças do id e cancela requisições anteriores.
     const dados = this.route.paramMap.pipe(
-      map((params) => params.get('id')),
-      tap(() => {
-        this.carregando.set(true);
-        this.erro.set('');
-        this.projeto.set(null);
-      }),
-      switchMap((id) =>
-        id === null
-          ? of(null)
-          : this.api.getProjetoComTarefas(id).pipe(
-              catchError((erro: HttpErrorResponse) => {
-                this.erro.set(
-                  erro.status === 404
-                    ? 'Registro não encontrado: o projeto solicitado não existe.'
-                    : 'Não foi possível carregar o projeto. Verifique se a API está funcionando.',
+      switchMap((params) =>
+        this.recarregar.pipe(
+          startWith(undefined),
+          switchMap(() => {
+            this.carregando.set(true);
+            this.erro.set('');
+            this.erroExcluir.set('');
+            this.projeto.set(null);
+            const id = params.get('id');
+            return id === null
+              ? of(null)
+              : this.api.getProjetoComTarefas(id).pipe(
+                  catchError((erro: HttpErrorResponse) => {
+                    this.erro.set(
+                      erro.status === 404
+                        ? 'Projeto não encontrado.'
+                        : 'Não foi possível carregar o projeto. Verifique se a API está funcionando.',
+                    );
+                    return of(null);
+                  }),
                 );
-                return of(null);
-              }),
-              finalize(() => this.carregando.set(false)),
-            ),
+          }),
+        ),
       ),
       takeUntilDestroyed(),
     );
     afterNextRender(() =>
       dados.subscribe((projeto) => {
+        this.carregando.set(false);
         this.projeto.set(projeto);
         if (!projeto && !this.erro()) this.erro.set('Projeto não encontrado.');
         if (!projeto) this.carregando.set(false);

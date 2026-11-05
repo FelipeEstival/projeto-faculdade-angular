@@ -139,3 +139,15 @@
   resize: vertical;
   min-height: 100px;
 }
+
+@media (max-width: 520px) {
+  form {
+    padding: 18px 14px;
+  }
+  .acoes {
+    flex-wrap: wrap;
+  }
+  .acoes button {
+    flex: 1 1 160px;
+  }
+}

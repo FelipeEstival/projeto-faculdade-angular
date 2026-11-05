@@ -1,4 +1,3 @@
-
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -18,12 +17,7 @@ import { FiltrosTarefasService } from '../../services/filtros-tarefas.service';
 
 @Component({
   selector: 'app-tarefas',
-  imports: [
-    BoardHeader,
-    TarefaCard,
-    RouterLink,
-    Icon,
-  ],
+  imports: [BoardHeader, TarefaCard, RouterLink, Icon],
   templateUrl: './tarefas.html',
   styleUrl: './tarefas.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,6 +35,9 @@ export class Tarefas {
   protected readonly carregando = signal(true);
   protected readonly erro = signal('');
   protected readonly aviso = signal('');
+  protected readonly carregandoProjetos = signal(true);
+  protected readonly erroProjetos = signal('');
+  private ultimaMovimentacao: { tarefa: Tarefa; status: string } | null = null;
   protected readonly salvando = signal(false);
 
   protected readonly busca = this.filtros.busca;
@@ -63,9 +60,7 @@ export class Tarefas {
   );
 
   protected readonly tarefasProjeto = computed(() =>
-    this.tarefas().filter(
-      (t) => !this.projetoId() || t.projetoId === this.projetoId(),
-    ),
+    this.tarefas().filter((t) => !this.projetoId() || t.projetoId === this.projetoId()),
   );
 
   protected readonly concluidas = computed(
@@ -100,6 +95,14 @@ export class Tarefas {
     return lista;
   });
 
+  protected readonly mensagemVazia = computed(() => {
+    if (!this.tarefas().length)
+      return 'Nenhuma tarefa cadastrada. Adicione sua primeira tarefa para começar.';
+    if (this.projetoId() && !this.tarefasProjeto().length)
+      return 'Este projeto ainda não possui tarefas.';
+    return 'Nenhuma tarefa encontrada para a busca ou os filtros selecionados.';
+  });
+
   protected readonly quadro = computed(() =>
     this.colunas.map((c) => ({
       ...c,
@@ -117,31 +120,19 @@ export class Tarefas {
       this.projetoId.set(params.get('projetoId') ?? '');
 
       const prioridade = params.get('prioridade') ?? '';
-      this.prioridade.set(
-        ['alta', 'media', 'baixa'].includes(prioridade) ? prioridade : '',
-      );
+      this.prioridade.set(['alta', 'media', 'baixa'].includes(prioridade) ? prioridade : '');
 
       const status = params.get('status') ?? '';
-      this.status.set(
-        this.colunas.some((c) => c.id === status) ? status : '',
-      );
+      this.status.set(this.colunas.some((c) => c.id === status) ? status : '');
 
       const ordem = params.get('ordem') ?? 'manual';
-      this.ordenacao.set(
-        ['manual', 'prazo', 'prioridade'].includes(ordem) ? ordem : 'manual',
-      );
+      this.ordenacao.set(['manual', 'prazo', 'prioridade'].includes(ordem) ? ordem : 'manual');
     });
 
     afterNextRender(() => {
       this.carregarTarefas();
 
-      this.api.getTodosProjetos().subscribe({
-        next: (projetos) => this.projetos.set(projetos),
-        error: () =>
-          this.aviso.set(
-            'Não foi possível carregar os projetos. O quadro geral continua disponível.',
-          ),
-      });
+      this.carregarProjetos();
     });
   }
 
@@ -175,7 +166,31 @@ export class Tarefas {
     });
   }
 
+  protected carregarProjetos(): void {
+    this.carregandoProjetos.set(true);
+    this.erroProjetos.set('');
+    this.api.getTodosProjetos().subscribe({
+      next: (projetos) => {
+        this.projetos.set(projetos);
+        this.carregandoProjetos.set(false);
+      },
+      error: () => {
+        this.erroProjetos.set(
+          'Não foi possível carregar os projetos. As tarefas já carregadas continuam disponíveis.',
+        );
+        this.carregandoProjetos.set(false);
+      },
+    });
+  }
+
+  protected tentarNovamente(): void {
+    const movimento = this.ultimaMovimentacao;
+    if (movimento) this.mover(movimento.tarefa, movimento.status);
+    else this.carregarTarefas();
+  }
+
   protected carregarTarefas(): void {
+    this.ultimaMovimentacao = null;
     this.carregando.set(true);
     this.erro.set('');
 
@@ -185,39 +200,31 @@ export class Tarefas {
         this.carregando.set(false);
       },
       error: () => {
-        this.erro.set(
-          'Não foi possível carregar as tarefas. Verifique se a API está funcionando.',
-        );
+        this.erro.set('Não foi possível carregar as tarefas. Verifique se a API está funcionando.');
         this.carregando.set(false);
       },
     });
   }
 
   protected mover(tarefa: Tarefa, status: string): void {
-    if (
-      this.salvando() ||
-      tarefa.status === status ||
-      !this.colunas.some((c) => c.id === status)
-    ) {
+    if (this.salvando() || tarefa.status === status || !this.colunas.some((c) => c.id === status)) {
       return;
     }
 
     const anterior = this.tarefas();
+    this.ultimaMovimentacao = { tarefa, status };
 
     this.salvando.set(true);
     this.erro.set('');
 
     this.tarefas.update((lista) =>
-      lista.map((t) =>
-        t.id === tarefa.id ? { ...t, status: status as Status } : t,
-      ),
+      lista.map((t) => (t.id === tarefa.id ? { ...t, status: status as Status } : t)),
     );
 
     this.api.atualizarTarefa(tarefa.id, { status: status as Status }).subscribe({
       next: (salva) => {
-        this.tarefas.update((lista) =>
-          lista.map((t) => (t.id === salva.id ? salva : t)),
-        );
+        this.ultimaMovimentacao = null;
+        this.tarefas.update((lista) => lista.map((t) => (t.id === salva.id ? salva : t)));
 
         this.salvando.set(false);
 

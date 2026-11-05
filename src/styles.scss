@@ -7,7 +7,7 @@
   --cor-borda: rgba(255, 255, 255, 0.08);
   --cor-texto: #f3f4fc;
   --cor-texto-suave: #a5a7bf;
-  --cor-primaria: #4275ff;
+  --cor-primaria: #315bd6;
   --cor-primaria-suave: rgba(66, 117, 255, 0.15);
   --cor-erro: #ff9eaa;
   --raio: 20px;
@@ -168,4 +168,44 @@ p {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Evita cortes de textos longos e mantém alvos e foco utilizáveis no celular. */
+main,
+section,
+article,
+form,
+.campo {
+  min-width: 0;
+}
+h1,
+h2,
+h3,
+p,
+dd,
+a,
+button {
+  overflow-wrap: anywhere;
+}
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+button,
+.button,
+select,
+summary {
+  min-height: 44px;
+}
+.botao-perigo {
+  color: var(--cor-erro);
+  border-color: var(--cor-erro);
+}
+[role='status'],
+[role='alert'] {
+  overflow-wrap: anywhere;
+}
+.tarefa-card a:focus-visible {
+  outline-color: currentColor;
 }

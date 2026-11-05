@@ -7,13 +7,29 @@ import { By } from '@angular/platform-browser';
 import { routes } from '../../app.routes';
 import { TarefaForm } from '../../components/tarefa-form/tarefa-form';
 
-const dados = { projetoId: '2', titulo: 'Minha tarefa', descricao: 'Descrição', status: 'a-fazer' as const, prioridade: 'alta' as const, responsavel: 'Kaio', prazo: '2026-10-25' };
-const projeto = { id: '2', nome: 'Projeto 2', descricao: '', disciplina: 'Frontend', criadoEm: '2026-10-01' };
+const dados = {
+  projetoId: '2',
+  titulo: 'Minha tarefa',
+  descricao: 'Descrição',
+  status: 'a-fazer' as const,
+  prioridade: 'alta' as const,
+  responsavel: 'Kaio',
+  prazo: '2026-10-25',
+};
+const projeto = {
+  id: '2',
+  nome: 'Projeto 2',
+  descricao: '',
+  disciplina: 'Frontend',
+  criadoEm: '2026-10-01',
+};
 
 describe('Criação e edição de tarefas', () => {
   let http: HttpTestingController;
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting()] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting()],
+    });
     http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
@@ -29,14 +45,23 @@ describe('Criação e edição de tarefas', () => {
     http.expectOne('http://localhost:3000/projetos').flush([projeto]);
     TestBed.tick();
     await h.fixture.whenStable();
-    expect((h.routeNativeElement?.querySelector('[name="projetoId"]') as HTMLSelectElement).value).toBe('2');
-    expect((h.routeNativeElement?.querySelector('button[type="submit"]') as HTMLButtonElement).disabled).toBe(true);
+    expect(
+      (h.routeNativeElement?.querySelector('[name="projetoId"]') as HTMLSelectElement).value,
+    ).toBe('2');
+    const submit = h.routeNativeElement!.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    expect(submit.disabled).toBe(false);
+    submit.click();
+    TestBed.tick();
+    h.detectChanges();
+    expect(h.routeNativeElement?.querySelector('[aria-invalid="true"]')).not.toBeNull();
+    http.expectNone('http://localhost:3000/tarefas');
   });
 
   it('faz POST sem id, bloqueia envio repetido e volta para a lista', async () => {
     const h = await abrir('/tarefas/nova');
     http.expectOne('http://localhost:3000/projetos').flush([projeto]);
-    const form = h.routeDebugElement!.query(By.directive(TarefaForm)).componentInstance as TarefaForm;
+    const form = h.routeDebugElement!.query(By.directive(TarefaForm))
+      .componentInstance as TarefaForm;
     const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     form.salvar.emit(dados);
     form.salvar.emit(dados);
@@ -56,8 +81,11 @@ describe('Criação e edição de tarefas', () => {
     http.expectOne('http://localhost:3000/projetos').flush([projeto]);
     TestBed.tick();
     await h.fixture.whenStable();
-    expect((h.routeNativeElement?.querySelector('[name="titulo"]') as HTMLInputElement).value).toBe(dados.titulo);
-    const form = h.routeDebugElement!.query(By.directive(TarefaForm)).componentInstance as TarefaForm;
+    expect((h.routeNativeElement?.querySelector('[name="titulo"]') as HTMLInputElement).value).toBe(
+      dados.titulo,
+    );
+    const form = h.routeDebugElement!.query(By.directive(TarefaForm))
+      .componentInstance as TarefaForm;
     vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     form.salvar.emit({ ...dados, titulo: 'Alterada' });
     const req = http.expectOne('http://localhost:3000/tarefas/7');
@@ -68,7 +96,9 @@ describe('Criação e edição de tarefas', () => {
 
   it('mostra 404 sem apresentar formulário vazio', async () => {
     const h = await abrir('/tarefas/99/editar');
-    http.expectOne('http://localhost:3000/tarefas/99').flush({}, { status: 404, statusText: 'Not Found' });
+    http
+      .expectOne('http://localhost:3000/tarefas/99')
+      .flush({}, { status: 404, statusText: 'Not Found' });
     h.detectChanges();
     expect(h.routeNativeElement?.textContent).toContain('Tarefa não encontrada.');
     expect(h.routeNativeElement?.querySelector('app-tarefa-form')).toBeNull();
@@ -77,7 +107,8 @@ describe('Criação e edição de tarefas', () => {
   it('preserva o formulário e permite tentar novamente após erro ao salvar', async () => {
     const h = await abrir('/tarefas/nova');
     http.expectOne('http://localhost:3000/projetos').flush([projeto]);
-    const form = h.routeDebugElement!.query(By.directive(TarefaForm)).componentInstance as TarefaForm;
+    const form = h.routeDebugElement!.query(By.directive(TarefaForm))
+      .componentInstance as TarefaForm;
     form.salvar.emit(dados);
     http.expectOne('http://localhost:3000/tarefas').flush({}, { status: 500, statusText: 'Error' });
     h.detectChanges();
