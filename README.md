@@ -49,8 +49,7 @@ O terminal exibirá o endereço local para acessar a aplicação no navegador.
 
 ## Módulo de leitura da API (M2)
 
-`src/app/services/tarefas.service.ts` centraliza as consultas HTTP com retorno tipado. A base
-local da API é `http://localhost:3000` (`API_URL`), e os tipos de domínio estão em `src/tipos.ts`.
+`src/app/services/tarefas.service.ts` centraliza as consultas HTTP com retorno tipado. Em desenvolvimento, a base é `http://localhost:3000`. Em produção, o build lê `API_URL` do ambiente. Os tipos de domínio estão em `src/tipos.ts`.
 
 | Função | Retorno | Requisição |
 | --- | --- | --- |
@@ -75,7 +74,7 @@ O filtro é combinado com o projeto e a prioridade selecionados, mantendo a
 ordenação atual. Limpar o campo volta a mostrar todas as tarefas que atendem
 aos demais filtros. A busca é local e não altera os dados da API.
 
-Para validar: `npm test -- --watch=false` e `npm run build`.
+Para validar: `npm test -- --watch=false`. Veja abaixo como gerar o build de produção.
 
 ## Autores
 
@@ -108,3 +107,52 @@ A extensão `ProjetoComTarefas` fica em `src/app/services/projeto-com-tarefas.ts
 A API altera `db.json` ao receber escritas. Para restaurar, copie `db.seed.json`
 sobre `db.json`: `cp db.seed.json db.json` no Linux/macOS ou
 `Copy-Item db.seed.json db.json` no PowerShell.
+
+
+## Publicação (Marco 6)
+
+**Aplicação pública:** o link será incluído aqui após o primeiro deploy no Netlify.
+
+### 1. API no Render
+
+Conecte o repositório no painel do Render e crie um **Blueprint** com o
+`render.yaml`. Use a branch que contém o Marco 6. O serviço web roda
+`npm run api:hosted`, usa a porta fornecida pelo Render e inicializa o banco
+com `db.seed.json` na primeira execução. Copie a URL HTTPS que o Render exibir.
+
+Confira se `/tarefas`, `/tarefas/2` e `/projetos/1?_embed=tarefas` retornam JSON.
+A API é pública e gravável para a demonstração. Use apenas dados fictícios.
+No plano gratuito, mudanças no banco podem se perder ao reiniciar ou publicar.
+Caso a equipe precise preservá-las, configure um disco persistente no Render e
+aponte `DB_PATH` para um arquivo dentro do disco.
+
+### 2. Angular no Netlify
+
+Importe o mesmo repositório no Netlify. Em **Environment variables**, cadastre
+`API_URL` com a URL HTTPS do Render (sem incluir `/tarefas` ou `/projetos`).
+O `netlify.toml` já informa o comando e a pasta de publicação.
+Depois do primeiro deploy, substitua o aviso no início desta seção pela URL
+pública que o Netlify mostrar.
+
+Abra `/tarefas/2` diretamente em uma aba nova e recarregue. O Netlify serve
+`index.html` com HTTP 200 nessa rota e o Angular resolve o detalhe. Confira
+também a lista, o quadro e `/projetos/1`. Se `API_URL` mudar, gere outro deploy.
+
+### Build de produção para conferência local
+
+Rode `npm ci` e, em um terminal separado, `npm run api`. No CMD do Windows:
+
+```cmd
+set "API_URL=http://localhost:3000"
+npm run build
+```
+
+Em Bash:
+
+```bash
+API_URL=http://localhost:3000 npm run build
+```
+
+O resultado fica em `dist/frontend-angular/browser`. Para servir essa pasta,
+use um servidor estático com fallback para `index.html` nas rotas da aplicação.
+O roteiro de apresentação está em [docs/MARCO6_APRESENTACAO.md](docs/MARCO6_APRESENTACAO.md).
