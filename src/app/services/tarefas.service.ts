@@ -10,7 +10,7 @@ import type {
 } from '../../tipos';
 import type { ProjetoComTarefas } from './projeto-com-tarefas';
 
-export const API_URL = 'http://localhost:3000';
+import { API_URL } from './api-config';
 export const TAREFAS_API_URL = `${API_URL}/tarefas`;
 export const PROJETOS_API_URL = `${API_URL}/projetos`;
 
